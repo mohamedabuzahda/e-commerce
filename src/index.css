@@ -1,0 +1,37 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #ffffff;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #1f2937;
+}
+/* دعم الاتجاه */
+html[dir="rtl"] .navbar {
+  direction: rtl;
+}
+
+html[dir="rtl"] .links {
+  flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .badge {
+  margin-left: 0;
+  margin-right: 4px;
+}
+
+html[dir="rtl"] .header,
+html[dir="rtl"] .row {
+  direction: rtl;
+}
+
+html[dir="rtl"] .price {
+  text-align: left;
+}
+
+html[dir="rtl"] .total {
+  justify-content: flex-start;
+}
