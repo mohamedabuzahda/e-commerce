@@ -40,7 +40,7 @@ function ProductDetails() {
 
   return (
     <div className={styles.page}>
-      <Link to="/" className={styles.back}>
+      <Link to="/products" className={styles.back}>
         ← Back to Products
       </Link>
 

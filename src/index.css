@@ -4,10 +4,55 @@
   box-sizing: border-box;
 }
 
+:root {
+  font-family: "DM Sans", "Avenir Next", sans-serif;
+  color: #1f1f1f;
+  background: #f8f7fc;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --color-primary: #6c63ff;
+  --color-primary-dark: #554be8;
+  --color-primary-soft: #eeecff;
+  --color-lavender: #f8f7fc;
+  --color-ink: #1f1f1f;
+  --color-muted: #77788c;
+  --color-border: #e9e7f1;
+  --shadow-soft: 0 12px 34px rgba(42, 34, 92, 0.06);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: #ffffff;
-  font-family: system-ui, -apple-system, sans-serif;
-  color: #1f2937;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(139, 123, 255, 0.08), transparent 34rem),
+    #f8f7fc;
+  color: var(--color-ink);
+  font-family: "DM Sans", "Avenir Next", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button,
+a,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(108, 99, 255, 0.3);
+  outline-offset: 3px;
 }
 /* دعم الاتجاه */
 html[dir="rtl"] .navbar {
@@ -19,8 +64,7 @@ html[dir="rtl"] .links {
 }
 
 html[dir="rtl"] .badge {
-  margin-left: 0;
-  margin-right: 4px;
+  margin-inline: 4px 0;
 }
 
 html[dir="rtl"] .header,
@@ -29,9 +73,9 @@ html[dir="rtl"] .row {
 }
 
 html[dir="rtl"] .price {
-  text-align: left;
+  text-align: start;
 }
 
 html[dir="rtl"] .total {
-  justify-content: flex-start;
+  justify-content: space-between;
 }

@@ -1,57 +1,59 @@
 .page {
-  max-width: 1000px;
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 30px 20px;
-  background: #ffffff;
-  min-height: 100vh;
+  padding: 30px 24px 64px;
+  min-height: calc(100vh - 76px);
 }
 
 .back {
   display: inline-block;
-  margin-bottom: 20px;
-  color: #3b82f6;
+  margin-bottom: 18px;
+  color: #655be8;
   text-decoration: none;
   font-weight: 500;
+  font-size: 14px;
 }
 
 .container {
   display: flex;
-  gap: 40px;
+  align-items: center;
+  gap: 52px;
   background: #ffffff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f3f4f6;
+  padding: 38px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(42, 34, 92, 0.055);
+  border: 1px solid #eeecf4;
 }
 
 .image {
-  width: 400px;
-  height: 400px;
+  width: 46%;
+  height: 410px;
   object-fit: contain;
-  background: #fafafa;
-  border-radius: 8px;
+  background: #f8f7fc;
+  border-radius: 10px;
 }
 
 .info h1 {
   margin: 0 0 8px;
   font-size: 1.7rem;
-  color: #111827;
+  color: #202046;
+  line-height: 1.2;
 }
 
 .brand {
-  color: #6b7280;
+  color: #77788c;
   margin: 0 0 4px;
 }
 
 .category {
-  color: #9ca3af;
+  color: #89899a;
   font-size: 14px;
   text-transform: capitalize;
   margin-bottom: 12px;
 }
 
 .rating {
-  color: #f59e0b;
+  color: #d89f32;
   margin-bottom: 12px;
 }
 
@@ -59,7 +61,7 @@
   font-size: 26px;
   font-weight: 700;
   margin: 12px 0;
-  color: #111827;
+  color: #202046;
 }
 
 .stock {
@@ -67,24 +69,25 @@
 }
 
 .in {
-  color: #22c55e;
+  color: #21866d;
   font-weight: 600;
 }
 
 .out {
-  color: #ef4444;
+  color: #b54668;
   font-weight: 600;
 }
 
 .description {
-  color: #4b5563;
+  color: #686981;
   line-height: 1.6;
   margin-bottom: 24px;
 }
 
 .addBtn {
+  min-height: 46px;
   padding: 12px 32px;
-  background: #22c55e;
+  background: #6c63ff;
   color: white;
   border: none;
   border-radius: 8px;
@@ -94,7 +97,7 @@
 }
 
 .addBtn:disabled {
-  background: #9ca3af;
+  background: #d7d5e1;
   cursor: not-allowed;
 }
 
@@ -102,15 +105,19 @@
   text-align: center;
   padding: 80px;
   font-size: 18px;
-  color: #6b7280;
+  color: #77788c;
 }
 
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
+    align-items: stretch;
+    gap: 24px;
+    padding: 20px;
   }
+
   .image {
     width: 100%;
-    height: 300px;
+    height: min(72vw, 330px);
   }
 }

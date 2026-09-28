@@ -2,61 +2,254 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 40px;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  min-height: 76px;
+  padding: 14px max(24px, calc((100% - 1240px) / 2));
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid rgba(233, 231, 241, 0.9);
   position: sticky;
   top: 0;
   z-index: 100;
+  backdrop-filter: blur(16px);
 }
 
 .logo {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #1f2937;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  color: #655be8;
   text-decoration: none;
 }
 
 .links {
   display: flex;
-  gap: 24px;
+  gap: 22px;
   align-items: center;
 }
 
-.links a {
-  text-decoration: none;
-  color: #4b5563;
+.textLink {
+  color: #55566a;
+  font-size: 14px;
   font-weight: 500;
-  font-size: 15px;
+  text-decoration: none;
   transition: color 0.2s;
 }
 
-.links a:hover {
-  color: #111827;
+.textLink:hover {
+  color: #655be8;
+}
+
+.iconLink {
+  position: relative;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 9px;
+  color: #55566a;
+  transition: color 0.2s, background 0.2s;
+}
+
+.iconLink:hover {
+  background: #f0efff;
+  color: #655be8;
+}
+
+.iconLink svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
 }
 
 .badge {
-  background: #ef4444;
+  background: #6c63ff;
   color: white;
   font-size: 11px;
   padding: 2px 7px;
   border-radius: 9999px;
-  margin-left: 4px;
+  position: absolute;
+  top: -3px;
+  right: -2px;
+  min-width: 17px;
+  text-align: center;
 }
 
-/* Language Dropdown */
-.langSelect {
-  padding: 6px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: white;
-  font-size: 14px;
+.languageMenu {
+  position: relative;
+}
+
+.languageTrigger {
+  display: flex;
+  min-width: 58px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 9px;
+  border: 1px solid #e5e2f1;
+  border-radius: 9px;
+  background: #fff;
   cursor: pointer;
-  outline: none;
-  color: #374151;
+  list-style: none;
 }
 
-.langSelect:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+.languageTrigger::-webkit-details-marker {
+  display: none;
+}
+
+.languageTrigger:focus-visible {
+  outline: 3px solid rgba(108, 99, 255, 0.3);
+  outline-offset: 2px;
+}
+
+.dropdownCaret {
+  width: 14px;
+  height: 14px;
+  color: #77788c;
+  transition: transform 0.2s;
+}
+
+.languageOptions {
+  position: absolute;
+  z-index: 120;
+  top: calc(100% + 8px);
+  inset-inline-end: 0;
+  display: grid;
+  width: 158px;
+  gap: 3px;
+  padding: 6px;
+  border: 1px solid #e9e7f1;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(42, 34, 92, 0.12);
+}
+
+.languageOption {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #55566a;
+  cursor: pointer;
+  font-size: 13px;
+  text-align: start;
+}
+
+.languageOption:hover,
+.selectedLanguage {
+  background: #f0efff;
+  color: #655be8;
+}
+
+.languageOption:focus-visible {
+  outline: 2px solid rgba(108, 99, 255, 0.45);
+  outline-offset: -2px;
+}
+
+.languageFlag {
+  display: block;
+  width: 24px;
+  height: 16px;
+  flex: 0 0 24px;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.languageOption .languageFlag {
+  width: 22px;
+  height: 15px;
+  flex-basis: 22px;
+}
+
+.languageMenu[open] .dropdownCaret {
+  transform: rotate(180deg);
+}
+
+.languageMenu[open] .languageTrigger {
+  border-color: #c9c4ff;
+  background: #f7f6ff;
+}
+
+.languageMenu[open] .languageOptions {
+  animation: menu-appear 120ms ease-out;
+}
+
+@keyframes menu-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .navbar {
+    min-height: 68px;
+    padding: 12px 18px;
+    gap: 12px;
+  }
+
+  .logo {
+    font-size: 1.15rem;
+  }
+
+  .links {
+    gap: 14px;
+  }
+
+  .iconLink {
+    width: 34px;
+    height: 34px;
+  }
+
+  .textLink {
+    font-size: 13px;
+  }
+
+  .languageTrigger {
+    min-width: 52px;
+    height: 34px;
+    padding: 0 7px;
+    gap: 6px;
+  }
+
+  .dropdownCaret {
+    width: 13px;
+    height: 13px;
+  }
+
+  .languageFlag {
+    width: 21px;
+    height: 14px;
+  }
+
+  .languageOption .languageFlag {
+    width: 22px;
+    height: 15px;
+  }
+}
+
+@media (max-width: 390px) {
+  .navbar {
+    padding-inline: 12px;
+  }
+
+  .links {
+    gap: 7px;
+  }
+
+  .textLink {
+    font-size: 12px;
+  }
 }

@@ -17,7 +17,7 @@ function Cart() {
     return (
       <div className={styles.empty}>
         <h2>Your cart is empty</h2>
-        <Link to="/" className={styles.link}>
+        <Link to="/products" className={styles.link}>
           Continue Shopping
         </Link>
       </div>
