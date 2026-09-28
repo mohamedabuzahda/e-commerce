@@ -12,7 +12,11 @@ function Stars({ rating }) {
         const part = rating - (i - 1);
         const fill = part >= 0.75 ? 100 : part >= 0.25 ? 50 : 0;
         return (
-          <span key={i} className={styles.star} style={{ "--fill": `${fill}%` }}>
+          <span
+            key={i}
+            className={styles.star}
+            style={{ "--fill": `${fill}%` }}
+          >
             ★
           </span>
         );
@@ -42,7 +46,11 @@ function ProductCard({ product }) {
         {/* الصورة قابلة للضغط */}
         <Link to={`/product/${product.id}`} className={styles.imageWrap}>
           {discount > 0 && <span className={styles.sale}>{discount}% OFF</span>}
-          <img src={product.thumbnail} alt={product.title} className={styles.image} />
+          <img
+            src={product.thumbnail}
+            alt={product.title}
+            className={styles.image}
+          />
         </Link>
 
         {/* زرار القلب (برة الـ Link عشان الضغط عليه ميفتحش صفحة المنتج) */}
@@ -53,7 +61,16 @@ function ProductCard({ product }) {
           aria-label="Add to wishlist"
           aria-pressed={liked}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill={liked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill={liked ? "currentColor" : "none"}
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8Z" />
           </svg>
         </button>
@@ -77,7 +94,9 @@ function ProductCard({ product }) {
           {oldPrice && <span className={styles.oldPrice}>${oldPrice}</span>}
         </div>
 
-        <span className={`${styles.stockPill} ${isOutOfStock ? styles.out : styles.in}`}>
+        <span
+          className={`${styles.stockPill} ${isOutOfStock ? styles.out : styles.in}`}
+        >
           {isOutOfStock ? "Out of stock" : "In stock"}
         </span>
 

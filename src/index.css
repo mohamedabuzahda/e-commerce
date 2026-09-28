@@ -1,14 +1,43 @@
+:root {
+  --primary: #6c63ff;
+  --primary-dark: #574fe0;
+  --light: #8b7bff;
+  --soft: #eae8ff;
+  --bg: #f8f7fc;
+  --text: #1f1f1f;
+  --muted: #6b7280;
+  --white: #ffffff;
+  --border: #ecebf5;
+  --success: #12945f;
+  --success-bg: #dcf6ea;
+  --danger: #d9304f;
+  --danger-bg: #fde4e9;
+  --radius: 14px;
+  --shadow: 0 4px 14px rgba(108, 99, 255, 0.1);
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  background: #ffffff;
-  font-family: system-ui, -apple-system, sans-serif;
-  color: #1f2937;
+button,
+input,
+select {
+  font-family: inherit;
 }
+
+body {
+  background: var(--bg);
+  font-family: "Poppins", sans-serif;
+  color: var(--text);
+}
+/* الخط العربي: Cairo (بيتحمّل من index.html) */
+html[dir="rtl"] body {
+  font-family: "Cairo", "Poppins", sans-serif;
+}
+
 /* دعم الاتجاه */
 html[dir="rtl"] .navbar {
   direction: rtl;

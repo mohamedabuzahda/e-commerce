@@ -1,62 +1,162 @@
 .navbar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 28px;
   padding: 14px 40px;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--white);
+  box-shadow: 0 2px 12px rgba(108, 99, 255, 0.08);
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
+/* اللوجو: Shop غامق + Ease بنفسجي */
 .logo {
-  font-size: 1.3rem;
+  font-size: 1.7rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--text);
   text-decoration: none;
+  letter-spacing: -0.5px;
+}
+
+.logo span {
+  color: var(--primary);
 }
 
 .links {
   display: flex;
   gap: 24px;
-  align-items: center;
 }
 
-.links a {
+.link {
   text-decoration: none;
-  color: #4b5563;
+  color: var(--text);
   font-weight: 500;
   font-size: 15px;
   transition: color 0.2s;
 }
 
-.links a:hover {
-  color: #111827;
+.link:hover,
+.active {
+  color: var(--primary);
 }
 
-.badge {
-  background: #ef4444;
-  color: white;
-  font-size: 11px;
-  padding: 2px 7px;
-  border-radius: 9999px;
-  margin-left: 4px;
+.active {
+  font-weight: 600;
 }
 
-/* Language Dropdown */
-.langSelect {
-  padding: 6px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: white;
+/* بحث النافبار (ياخد المساحة الفاضية) */
+.searchForm {
+  margin-inline-start: auto;
+  width: 100%;
+  max-width: 320px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 18px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--white);
   font-size: 14px;
-  cursor: pointer;
   outline: none;
-  color: #374151;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.langSelect:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+.searchInput:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.langBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.langBtn:hover {
+  color: var(--primary);
+}
+
+.cartLink {
+  position: relative;
+  display: flex;
+  color: var(--text);
+}
+
+.cartLink:hover {
+  color: var(--primary);
+}
+
+/* الدايرة الصغيرة اللي بتعرض عدد المنتجات */
+.badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 999px;
+}
+
+.loginBtn,
+.registerBtn {
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.loginBtn {
+  border: 1.5px solid var(--primary);
+  color: var(--primary);
+}
+
+.loginBtn:hover {
+  background: var(--soft);
+}
+
+.registerBtn {
+  background: var(--primary);
+  border: 1.5px solid var(--primary);
+  color: var(--white);
+}
+
+.registerBtn:hover {
+  background: var(--primary-dark);
+}
+
+/* موبايل */
+@media (max-width: 900px) {
+  .navbar {
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .searchForm {
+    order: 5;
+    max-width: 100%;
+  }
 }

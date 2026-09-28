@@ -1,55 +1,94 @@
 .card {
-  background: #ffffff;
-  border-radius: 12px;
+  background: var(--white);
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  position: relative;
-  transition: transform 0.2s, box-shadow 0.2s;
-  border: 1px solid #f3f4f6;
+  box-shadow: var(--shadow);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
 }
 
 .card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(108, 99, 255, 0.18);
 }
 
-.badge {
+/* حاوية الصورة + القلب */
+.media {
+  position: relative;
+}
+
+/* زرار القلب */
+.wish {
   position: absolute;
   top: 12px;
-  left: 12px;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  z-index: 2;
+  right: 12px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--text);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  z-index: 3;
+  transition:
+    transform 0.15s,
+    color 0.2s;
 }
 
-.in {
-  background: #22c55e;
-  color: white;
+.wish:hover {
+  transform: scale(1.08);
 }
 
-.out {
-  background: #ef4444;
-  color: white;
+.wishActive {
+  color: var(--danger);
+}
+
+/* منطقة الصورة بخلفية بنفسجي فاتح */
+.imageWrap {
+  position: relative;
+  display: block;
+  background: #f1effc;
 }
 
 .image {
   width: 100%;
-  height: 190px;
+  height: 200px;
   object-fit: contain;
-  background: #fafafa;
   padding: 16px;
+}
+
+/* شارة الخصم */
+.sale {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 600;
+  z-index: 2;
 }
 
 .info {
   padding: 14px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .title {
   font-size: 14px;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text);
   text-decoration: none;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -59,53 +98,115 @@
   min-height: 38px;
 }
 
+.title:hover {
+  color: var(--primary);
+}
+
 .brand {
   font-size: 12px;
-  color: #9ca3af;
+  color: var(--muted);
   margin: 4px 0 6px;
+  text-transform: capitalize;
 }
 
 .rating {
-  color: #f59e0b;
-  font-size: 13px;
+  display: flex;
+  align-items: center;
   margin-bottom: 8px;
 }
 
+.stars {
+  display: inline-flex;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+/* كل نجمة بتتلون حسب --fill (100% كاملة / 50% نص / 0% فاضية) */
+.star {
+  background: linear-gradient(90deg, #f5a623 var(--fill), #d9d7ea var(--fill));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
 .ratingNumber {
-  color: #6b7280;
-  margin-left: 3px;
+  color: var(--muted);
+  margin-inline-start: 4px;
   font-size: 12px;
 }
 
 .priceRow {
-  margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 .price {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
-  color: #111827;
+  color: var(--text);
+}
+
+.oldPrice {
+  font-size: 13px;
+  color: #a3a3b5;
+  text-decoration: line-through;
+}
+
+/* In stock / Out of stock */
+.stockPill {
+  align-self: flex-start;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.in {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.out {
+  background: var(--danger-bg);
+  color: var(--danger);
 }
 
 .addBtn {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
-  padding: 9px;
-  background: #22c55e;
-  color: white;
+  padding: 10px;
+  background: linear-gradient(135deg, var(--light), var(--primary));
+  color: var(--white);
   border: none;
-  border-radius: 8px;
+  border-radius: 999px;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  transition: background 0.2s;
+  box-shadow: 0 8px 18px rgba(108, 99, 255, 0.35);
+  transition:
+    opacity 0.2s,
+    transform 0.1s;
 }
 
 .addBtn:hover:not(:disabled) {
-  background: #16a34a;
+  opacity: 0.9;
+}
+
+.addBtn:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .addBtn:disabled {
-  background: #ef4444;
-  color: white;
+  background: #d9d7ea;
+  color: var(--muted);
+  box-shadow: none;
   cursor: not-allowed;
 }

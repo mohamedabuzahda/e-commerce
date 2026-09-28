@@ -1,14 +1,14 @@
 .page {
   text-align: center;
   padding: 100px 20px;
-  background: #ffffff;
+  background: transparent;
   min-height: 80vh;
 }
 
 .page h1 {
   font-size: 80px;
   margin: 0;
-  color: #1f2937;
+  color: var(--primary);
 }
 
 .page p {
@@ -18,7 +18,7 @@
 }
 
 .link {
-  color: #3b82f6;
+  color: var(--primary);
   font-weight: 500;
   text-decoration: none;
 }
