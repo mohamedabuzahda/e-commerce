@@ -1,11 +1,95 @@
-import React from 'react'
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FaFacebookF, FaGoogle } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
+import styles from "../styles/Login.module.css";
 
 const Login = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const { login } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-export default Login
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!email || !password) {
+      setError("Please enter your email and password");
+      return;
+    }
+
+    try {
+      login(email.trim(), password);
+      const destination = location.state?.from;
+      navigate(
+        destination
+          ? `${destination.pathname}${destination.search}${destination.hash}`
+          : "/",
+        { replace: true }
+      );
+    } catch (loginError) {
+      setError(loginError.message);
+    }
+  };
+
+  return (
+    <main className={styles.page}>
+      <div className={styles.formBox}>
+        <h1 className={styles.title}>Welcome Back</h1>
+
+        <p className={styles.subtitle}>
+          Login to your account
+        </p>
+
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <div className={styles.field}>
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          {error && <span className={styles.error}>{error}</span>}
+
+          <button type="submit" className={styles.button}>
+            Login
+          </button>
+        </form>
+
+        <div className={styles.socialDivider}><span>or continue with</span></div>
+        <div className={styles.socialButtons}>
+          <button type="button" className={styles.socialButton} onClick={() => setError("Google sign-in needs OAuth provider configuration.")}>
+            <FaGoogle aria-hidden="true" /> Google
+          </button>
+          <button type="button" className={styles.socialButton} onClick={() => setError("Facebook sign-in needs OAuth provider configuration.")}>
+            <FaFacebookF aria-hidden="true" /> Facebook
+          </button>
+        </div>
+
+        <p className={styles.registerLink}>
+          Don't have an account?{" "}
+          <Link to="/register">Create Account</Link>
+        </p>
+      </div>
+    </main>
+  );
+};
+
+export default Login;
