@@ -1,56 +1,94 @@
 .card {
-  background: #ffffff;
-  border-radius: 12px;
+  background: var(--white);
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(42, 34, 92, 0.045);
-  position: relative;
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-  border: 1px solid #eeecf4;
+  box-shadow: var(--shadow);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  border-color: #d9d5ff;
-  box-shadow: 0 12px 26px rgba(42, 34, 92, 0.09);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(108, 99, 255, 0.18);
 }
 
-.badge {
+/* Ã¢â€¢ÂªÃ‚Â¡Ã¢â€¢ÂªÃ‚ÂºÃ¢â€ËœÃƒÂªÃ¢â€ËœÃƒÂ¨Ã¢â€¢ÂªÃ¢Å’Â Ã¢â€¢ÂªÃ‚ÂºÃ¢â€ËœÃƒÂ¤Ã¢â€¢ÂªÃ¢â€¢Â¡Ã¢â€ËœÃƒÂªÃ¢â€¢ÂªÃ¢â€“â€™Ã¢â€¢ÂªÃ¢Å’Â + Ã¢â€¢ÂªÃ‚ÂºÃ¢â€ËœÃƒÂ¤Ã¢â€ËœÃƒÂ©Ã¢â€ËœÃƒÂ¤Ã¢â€¢ÂªÃ‚Â¿ */
+.media {
+  position: relative;
+}
+
+/* Ã¢â€¢ÂªÃ¢â€“â€œÃ¢â€¢ÂªÃ¢â€“â€™Ã¢â€¢ÂªÃ‚ÂºÃ¢â€¢ÂªÃ¢â€“â€™ Ã¢â€¢ÂªÃ‚ÂºÃ¢â€ËœÃƒÂ¤Ã¢â€ËœÃƒÂ©Ã¢â€ËœÃƒÂ¤Ã¢â€¢ÂªÃ‚Â¿ */
+.wish {
   position: absolute;
   top: 12px;
-  left: 12px;
-  padding: 5px 9px;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 600;
-  z-index: 2;
+  right: 12px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--text);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  z-index: 3;
+  transition:
+    transform 0.15s,
+    color 0.2s;
 }
 
-.in {
-  background: #e2f6ef;
-  color: #21866d;
+.wish:hover {
+  transform: scale(1.08);
 }
 
-.out {
-  background: #fae8ee;
-  color: #b54668;
+.wishActive {
+  color: var(--danger);
+}
+
+/* Ã¢â€ËœÃƒÂ Ã¢â€ËœÃƒÂ¥Ã¢â€¢ÂªÃ¢â€¢â€“Ã¢â€ËœÃƒÂ©Ã¢â€¢ÂªÃ¢Å’Â Ã¢â€¢ÂªÃ‚ÂºÃ¢â€ËœÃƒÂ¤Ã¢â€¢ÂªÃ¢â€¢Â¡Ã¢â€ËœÃƒÂªÃ¢â€¢ÂªÃ¢â€“â€™Ã¢â€¢ÂªÃ¢Å’Â Ã¢â€¢ÂªÃ‚Â¿Ã¢â€¢ÂªÃ‚Â«Ã¢â€ËœÃƒÂ¤Ã¢â€ËœÃƒÂ¼Ã¢â€ËœÃƒÂ¨Ã¢â€¢ÂªÃ¢Å’Â Ã¢â€¢ÂªÃ‚Â¿Ã¢â€ËœÃƒÂ¥Ã¢â€ËœÃƒÂ¼Ã¢â€¢ÂªÃ¢â€â€šÃ¢â€¢ÂªÃ‚Â¼Ã¢â€ËœÃƒÂ¨ Ã¢â€ËœÃƒÂ¼Ã¢â€¢ÂªÃ‚ÂºÃ¢â€¢ÂªÃ‚Â¬Ã¢â€¢ÂªÃ‚Â¡ */
+.imageWrap {
+  position: relative;
+  display: block;
+  background: #f1effc;
 }
 
 .image {
   width: 100%;
-  height: 205px;
+  height: 200px;
   object-fit: contain;
-  background: #fcfbfe;
-  padding: 20px;
+  padding: 16px;
+}
+
+/* Ã¢â€¢ÂªÃ¢â€Â¤Ã¢â€¢ÂªÃ‚ÂºÃ¢â€¢ÂªÃ¢â€“â€™Ã¢â€¢ÂªÃ¢Å’Â Ã¢â€¢ÂªÃ‚ÂºÃ¢â€ËœÃƒÂ¤Ã¢â€¢ÂªÃ‚Â«Ã¢â€¢ÂªÃ¢â€¢Â¡Ã¢â€ËœÃƒÂ  */
+.sale {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 600;
+  z-index: 2;
 }
 
 .info {
-  padding: 14px 15px 16px;
+  padding: 14px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .title {
   font-size: 14px;
   font-weight: 600;
-  color: #202046;
+  color: var(--text);
   text-decoration: none;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -60,77 +98,115 @@
   min-height: 38px;
 }
 
+.title:hover {
+  color: var(--primary);
+}
+
 .brand {
   font-size: 12px;
-  color: #89899a;
+  color: var(--muted);
   margin: 4px 0 6px;
+  text-transform: capitalize;
 }
 
 .rating {
-  color: #f59e0b;
-  font-size: 13px;
+  display: flex;
+  align-items: center;
   margin-bottom: 8px;
 }
 
+.stars {
+  display: inline-flex;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+/* Ã¢â€ËœÃƒÂ¢Ã¢â€ËœÃƒÂ¤ Ã¢â€ËœÃƒÂ¥Ã¢â€¢ÂªÃ‚Â¼Ã¢â€ËœÃƒÂ Ã¢â€¢ÂªÃ¢Å’Â Ã¢â€¢ÂªÃ‚Â¿Ã¢â€¢ÂªÃ‚Â¬Ã¢â€¢ÂªÃ‚Â¬Ã¢â€ËœÃƒÂ¤Ã¢â€ËœÃƒÂªÃ¢â€ËœÃƒÂ¥ Ã¢â€¢ÂªÃ‚Â¡Ã¢â€¢ÂªÃ¢â€â€šÃ¢â€¢ÂªÃ‚Â¿ --fill (100% Ã¢â€ËœÃƒÂ¢Ã¢â€¢ÂªÃ‚ÂºÃ¢â€ËœÃƒÂ Ã¢â€ËœÃƒÂ¤Ã¢â€¢ÂªÃ¢Å’Â / 50% Ã¢â€ËœÃƒÂ¥Ã¢â€¢ÂªÃ¢â€¢Â¡ / 0% Ã¢â€ËœÃƒÂ¼Ã¢â€¢ÂªÃ‚ÂºÃ¢â€¢ÂªÃ¢â€¢Â¢Ã¢â€ËœÃƒÂ¨Ã¢â€¢ÂªÃ¢Å’Â) */
+.star {
+  background: linear-gradient(90deg, #f5a623 var(--fill), #d9d7ea var(--fill));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
 .ratingNumber {
-  color: #77788c;
-  margin-left: 3px;
+  color: var(--muted);
+  margin-inline-start: 4px;
   font-size: 12px;
 }
 
 .priceRow {
-  margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 .price {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
-  color: #202046;
+  color: var(--text);
+}
+
+.oldPrice {
+  font-size: 13px;
+  color: #a3a3b5;
+  text-decoration: line-through;
+}
+
+/* In stock / Out of stock */
+.stockPill {
+  align-self: flex-start;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.in {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.out {
+  background: var(--danger-bg);
+  color: var(--danger);
 }
 
 .addBtn {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
-  min-height: 40px;
-  padding: 9px;
-  background: #6c63ff;
-  color: white;
+  padding: 10px;
+  background: linear-gradient(135deg, var(--light), var(--primary));
+  color: var(--white);
   border: none;
-  border-radius: 8px;
+  border-radius: 999px;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  transition: background 0.2s;
+  box-shadow: 0 8px 18px rgba(108, 99, 255, 0.35);
+  transition:
+    opacity 0.2s,
+    transform 0.1s;
 }
 
 .addBtn:hover:not(:disabled) {
-  background: #554be8;
+  opacity: 0.9;
+}
+
+.addBtn:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .addBtn:disabled {
-  background: #d7d5e1;
-  color: white;
+  background: #d9d7ea;
+  color: var(--muted);
+  box-shadow: none;
   cursor: not-allowed;
-}
-
-@media (max-width: 520px) {
-  .card {
-    display: grid;
-    grid-template-columns: 118px minmax(0, 1fr);
-    align-items: center;
-  }
-
-  .image {
-    height: 158px;
-    padding: 14px;
-  }
-
-  .info {
-    padding: 14px 14px 14px 4px;
-  }
-
-  .badge {
-    top: 8px;
-    left: 8px;
-    font-size: 9px;
-  }
 }
