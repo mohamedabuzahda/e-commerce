@@ -44,6 +44,8 @@ function Navbar() {
       <div className={styles.links}>
         <Link to="/" className={styles.textLink}>Home</Link>
         <Link to="/products" className={styles.textLink}>Shop</Link>
+        {user?.role === "admin" && <Link to="/admin" className={styles.textLink}>Admin</Link>}
+        {user && user.role !== "admin" && <Link to="/customer" className={styles.textLink}>My Account</Link>}
         {user ? (
           <details className={styles.accountMenu}>
             <summary

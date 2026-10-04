@@ -70,6 +70,7 @@ function Cart() {
         <span>Total</span>
         <strong>${total.toFixed(2)}</strong>
       </div>
+      <Link to="/checkout" className={styles.link}>Continue to checkout</Link>
     </div>
   );
 }

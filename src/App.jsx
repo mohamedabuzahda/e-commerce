@@ -10,6 +10,9 @@ import Products from "./pages/Products";
 import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import NotFound from "./pages/NotFound";
+import AdminDashboard from "./admin/Dashboard";
+import Checkout from "./pages/Checkout";
+import CustomerProfile from "./customer/Profile";
 
 function RequireAuth({ children }) {
   const { user } = useAuth();
@@ -18,23 +21,38 @@ function RequireAuth({ children }) {
   return user ? children : <Navigate to="/login" state={{ from: location }} replace />;
 }
 
+function RequireAdmin({ children }) {
+  const { user } = useAuth();
+  const location = useLocation();
+
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return user.role === "admin" ? children : <Navigate to="/" replace />;
+}
+
 function AppLayout() {
   const { pathname } = useLocation();
   const isAuthPage = pathname === "/login" || pathname === "/register";
+  const isAdminPage = pathname.startsWith("/admin");
 
   return (
     <>
-      {!isAuthPage && <Navbar />}
+      {!isAuthPage && !isAdminPage && <Navbar />}
       <Routes>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
+        <Route path="/admin" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
+        <Route path="/customer" element={<RequireAuth><CustomerProfile /></RequireAuth>} />
         <Route path="/products" element={<RequireAuth><Products /></RequireAuth>} />
         <Route path="/product/:id" element={<RequireAuth><ProductDetails /></RequireAuth>} />
         <Route path="/cart" element={<RequireAuth><Cart /></RequireAuth>} />
+        <Route path="/checkout" element={<RequireAuth><Checkout /></RequireAuth>} />
         <Route path="*" element={<RequireAuth><NotFound /></RequireAuth>} />
       </Routes>
-      {!isAuthPage && <Footer />}
+      {!isAuthPage && !isAdminPage && <Footer />}
     </>
   );
 }

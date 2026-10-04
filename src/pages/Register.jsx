@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaFacebookF, FaGoogle } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
+import { readList, USERS_KEY } from "../data/commerceStore";
 import styles from "../styles/Register.module.css";
 
 const Register = () => {
@@ -14,6 +15,7 @@ const Register = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [canSetUpAdmin] = useState(() => !readList(USERS_KEY).some((user) => user.role === "admin"));
   const { register } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -124,7 +126,7 @@ const Register = () => {
               value={formData.role}
               onChange={handleChange}
             >
-              <option value="admin">Admin</option>
+              {canSetUpAdmin && <option value="admin">Admin setup</option>}
               <option value="user">User</option>
               <option value="customer">Customer</option>
             </select>

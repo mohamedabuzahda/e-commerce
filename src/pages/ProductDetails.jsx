@@ -4,6 +4,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../store/cartSlice";
 import styles from "../styles/ProductDetails.module.css";
+import { APPROVED_PRODUCTS_KEY, readList } from "../data/commerceStore";
 
 function ProductDetails() {
   const { id } = useParams();
@@ -14,6 +15,13 @@ function ProductDetails() {
 
   useEffect(() => {
     setLoading(true);
+
+    const approvedProduct = readList(APPROVED_PRODUCTS_KEY).find((item) => String(item.id) === id);
+    if (approvedProduct) {
+      setProduct(approvedProduct);
+      setLoading(false);
+      return;
+    }
 
     axios
       .get(`https://dummyjson.com/products/${id}`)

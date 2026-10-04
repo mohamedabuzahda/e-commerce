@@ -1,0 +1,657 @@
+.page {
+    width: 100%;
+    max-width: 1140px;
+    margin: 0 auto;
+}
+
+
+/* =========================
+   Heading
+========================= */
+
+.heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.heading h1 {
+    margin: 4px 0 0;
+    color: #161b2d;
+    font-size: clamp(25px, 3vw, 34px);
+}
+
+.eyebrow {
+    margin: 0 0 6px;
+    color: #7040ef;
+    font: 700 11px Arial, sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.description {
+    margin: 10px 0 0;
+    color: #747487;
+    font: 13px Arial, sans-serif;
+}
+
+.date,
+.count {
+    color: #747487;
+    font: 12px Arial, sans-serif;
+    white-space: nowrap;
+}
+
+
+/* =========================
+   Heading Actions
+========================= */
+
+.headingActions {
+    display: flex;
+    gap: 10px;
+}
+
+.primaryButton,
+.secondaryButton,
+.deleteButton {
+    border-radius: 7px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font: 700 12px Arial, sans-serif;
+}
+
+.primaryButton {
+    border: 0;
+    background: #7040ef;
+    color: white;
+    box-shadow: 0 6px 14px #7040ef33;
+}
+
+.secondaryButton {
+    border: 1px solid #7040ef;
+    background: white;
+    color: #7040ef;
+}
+
+.deleteButton {
+    border: 1px solid #f15a69;
+    background: white;
+    color: #e33e50;
+}
+
+
+/* =========================
+   Button Hover
+========================= */
+
+.primaryButton:hover {
+    background: #5b2ed1;
+}
+
+.secondaryButton:hover,
+.deleteButton:hover {
+    background: #faf8ff;
+}
+
+
+/* =========================
+   Table
+========================= */
+
+.tableWrapper {
+    overflow-x: auto;
+    background: #fff;
+    box-shadow: 0 7px 22px #28204d12;
+}
+
+.table {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: collapse;
+    color: #212236;
+    text-align: left;
+    font: 14px Arial, sans-serif;
+}
+
+.table th,
+.table td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #e8e8ee;
+}
+
+.table th {
+    color: #202136;
+    background: #fff;
+    font-weight: 700;
+}
+
+.table tbody tr:nth-child(even) {
+    background: #f7f7f8;
+}
+
+.table tbody tr:hover {
+    background: #f0edff;
+}
+
+
+/* =========================
+   Badges
+========================= */
+
+.badge,
+.successBadge,
+.warningBadge {
+    display: inline-flex;
+    padding: 5px 9px;
+    border-radius: 6px;
+    background: #737985;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.successBadge {
+    background: #15915b;
+}
+
+.warningBadge {
+    background: #e33e50;
+}
+
+.emptyCell {
+    height: 90px;
+    color: #747487;
+    text-align: center;
+}
+
+.errorMessage {
+    margin: 0 0 18px;
+    color: #e33e50;
+    font: 13px Arial, sans-serif;
+}
+
+
+/* =========================
+   Row Actions
+========================= */
+
+.rowActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.approveButton {
+    border: 1px solid #15915b;
+    border-radius: 6px;
+    padding: 7px 10px;
+    background: #fff;
+    color: #15915b;
+    cursor: pointer;
+    font: 12px Arial, sans-serif;
+}
+
+.approveButton:hover {
+    background: #e9f8f0;
+}
+
+
+/* =========================
+   Form Card
+========================= */
+
+.formCard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr) auto;
+    align-items: end;
+    gap: 12px;
+    padding: 18px;
+    margin-bottom: 18px;
+    background: #fff;
+    box-shadow: 0 7px 22px #28204d12;
+}
+
+.formCard label,
+.bannerCard label {
+    display: grid;
+    gap: 7px;
+    color: #6b6b7b;
+    font: 11px Arial, sans-serif;
+}
+
+.formCard input,
+.formCard select,
+.bannerCard input {
+    min-width: 0;
+    border: 1px solid #dfe0e8;
+    border-radius: 6px;
+    padding: 10px;
+    color: #202136;
+    background: #fff;
+    font: 13px Arial, sans-serif;
+}
+
+.formCard .primaryButton {
+    height: 37px;
+}
+
+
+/* =========================
+   Banner
+========================= */
+
+.bannerList {
+    display: grid;
+    gap: 18px;
+}
+
+.bannerCard {
+    display: grid;
+    grid-template-columns: 140px 1fr 1fr;
+    gap: 16px;
+    align-items: end;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 7px 22px #28204d12;
+}
+
+.bannerCard label:last-child {
+    grid-column: 2 / -1;
+}
+
+.bannerCard .deleteButton {
+    min-height: 47px;
+}
+
+.savedMessage {
+    margin: -8px 0 18px;
+    color: #15915b;
+    font: 12px Arial, sans-serif;
+}
+
+
+/* =========================
+   Responsive - 900px
+========================= */
+
+@media (max-width: 900px) {
+
+    .formCard {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .bannerCard {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .bannerCard .deleteButton {
+        grid-column: 1 / -1;
+    }
+
+    .bannerCard label:last-child {
+        grid-column: 1 / -1;
+    }
+
+}
+
+
+/* =========================
+   Responsive - 640px
+========================= */
+
+@media (max-width: 640px) {
+
+    .heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .headingActions {
+        width: 100%;
+    }
+
+    .headingActions button {
+        flex: 1;
+    }
+
+    .formCard {
+        grid-template-columns: 1fr;
+    }
+
+    .bannerCard {
+        grid-template-columns: 1fr;
+    }
+
+    .bannerCard label:last-child {
+        grid-column: auto;
+    }
+
+}.page {
+    width: 100%;
+    max-width: 1140px;
+    margin: 0 auto;
+}
+
+
+/* =========================
+   Heading
+========================= */
+
+.heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.heading h1 {
+    margin: 4px 0 0;
+    color: #161b2d;
+    font-size: clamp(25px, 3vw, 34px);
+}
+
+.eyebrow {
+    margin: 0 0 6px;
+    color: #7040ef;
+    font: 700 11px Arial, sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.description {
+    margin: 10px 0 0;
+    color: #747487;
+    font: 13px Arial, sans-serif;
+}
+
+.date,
+.count {
+    color: #747487;
+    font: 12px Arial, sans-serif;
+    white-space: nowrap;
+}
+
+
+/* =========================
+   Heading Actions
+========================= */
+
+.headingActions {
+    display: flex;
+    gap: 10px;
+}
+
+.primaryButton,
+.secondaryButton,
+.deleteButton {
+    border-radius: 7px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font: 700 12px Arial, sans-serif;
+}
+
+.primaryButton {
+    border: 0;
+    background: #7040ef;
+    color: white;
+    box-shadow: 0 6px 14px #7040ef33;
+}
+
+.secondaryButton {
+    border: 1px solid #7040ef;
+    background: white;
+    color: #7040ef;
+}
+
+.deleteButton {
+    border: 1px solid #f15a69;
+    background: white;
+    color: #e33e50;
+}
+
+
+/* =========================
+   Button Hover
+========================= */
+
+.primaryButton:hover {
+    background: #5b2ed1;
+}
+
+.secondaryButton:hover,
+.deleteButton:hover {
+    background: #faf8ff;
+}
+
+
+/* =========================
+   Table
+========================= */
+
+.tableWrapper {
+    overflow-x: auto;
+    background: #fff;
+    box-shadow: 0 7px 22px #28204d12;
+}
+
+.table {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: collapse;
+    color: #212236;
+    text-align: left;
+    font: 14px Arial, sans-serif;
+}
+
+.table th,
+.table td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #e8e8ee;
+}
+
+.table th {
+    color: #202136;
+    background: #fff;
+    font-weight: 700;
+}
+
+.table tbody tr:nth-child(even) {
+    background: #f7f7f8;
+}
+
+.table tbody tr:hover {
+    background: #f0edff;
+}
+
+
+/* =========================
+   Badges
+========================= */
+
+.badge,
+.successBadge,
+.warningBadge {
+    display: inline-flex;
+    padding: 5px 9px;
+    border-radius: 6px;
+    background: #737985;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.successBadge {
+    background: #15915b;
+}
+
+.warningBadge {
+    background: #e33e50;
+}
+
+.emptyCell {
+    height: 90px;
+    color: #747487;
+    text-align: center;
+}
+
+
+/* =========================
+   Row Actions
+========================= */
+
+.rowActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.approveButton {
+    border: 1px solid #15915b;
+    border-radius: 6px;
+    padding: 7px 10px;
+    background: #fff;
+    color: #15915b;
+    cursor: pointer;
+    font: 12px Arial, sans-serif;
+}
+
+.approveButton:hover {
+    background: #e9f8f0;
+}
+
+
+/* =========================
+   Form Card
+========================= */
+
+.formCard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr) auto;
+    align-items: end;
+    gap: 12px;
+    padding: 18px;
+    margin-bottom: 18px;
+    background: #fff;
+    box-shadow: 0 7px 22px #28204d12;
+}
+
+.formCard label,
+.bannerCard label {
+    display: grid;
+    gap: 7px;
+    color: #6b6b7b;
+    font: 11px Arial, sans-serif;
+}
+
+.formCard input,
+.formCard select,
+.bannerCard input {
+    min-width: 0;
+    border: 1px solid #dfe0e8;
+    border-radius: 6px;
+    padding: 10px;
+    color: #202136;
+    background: #fff;
+    font: 13px Arial, sans-serif;
+}
+
+.formCard .primaryButton {
+    height: 37px;
+}
+
+
+/* =========================
+   Banner
+========================= */
+
+.bannerList {
+    display: grid;
+    gap: 18px;
+}
+
+.bannerCard {
+    display: grid;
+    grid-template-columns: 140px 1fr 1fr;
+    gap: 16px;
+    align-items: end;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 7px 22px #28204d12;
+}
+
+.bannerCard label:last-child {
+    grid-column: 2 / -1;
+}
+
+.bannerCard .deleteButton {
+    min-height: 47px;
+}
+
+.savedMessage {
+    margin: -8px 0 18px;
+    color: #15915b;
+    font: 12px Arial, sans-serif;
+}
+
+
+/* =========================
+   Responsive - 900px
+========================= */
+
+@media (max-width: 900px) {
+
+    .formCard {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .bannerCard {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .bannerCard .deleteButton {
+        grid-column: 1 / -1;
+    }
+
+    .bannerCard label:last-child {
+        grid-column: 1 / -1;
+    }
+
+}
+
+
+/* =========================
+   Responsive - 640px
+========================= */
+
+@media (max-width: 640px) {
+
+    .heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .headingActions {
+        width: 100%;
+    }
+
+    .headingActions button {
+        flex: 1;
+    }
+
+    .formCard {
+        grid-template-columns: 1fr;
+    }
+
+    .bannerCard {
+        grid-template-columns: 1fr;
+    }
+
+    .bannerCard label:last-child {
+        grid-column: auto;
+    }
+
+}
