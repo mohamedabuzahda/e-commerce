@@ -37,8 +37,8 @@ function Products() {
             <div className={styles.heading}>
                 <div>
                     <p className={styles.eyebrow}>Catalog</p>
-                    <h1>Product submissions</h1>
-                    <p className={styles.description}>Review customer listings before they appear in the store.</p>
+                    <h1>Product Management</h1>
+                    <p className={styles.description}>Review customer products and decide whether to add them to the store.</p>
                 </div>
                 <div className={styles.rowActions}>
                     <span className={styles.count}>{submissions.filter((item) => item.status === "pending").length} awaiting review</span>

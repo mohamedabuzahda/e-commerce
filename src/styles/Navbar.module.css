@@ -163,6 +163,22 @@
   text-transform: capitalize;
 }
 
+.profileLink {
+  display: block;
+  padding: 11px 10px;
+  border-top: 1px solid #eeecf4;
+  color: #55566a;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: start;
+}
+
+.profileLink:hover {
+  color: #655be8;
+  background: #f8f7fc;
+}
+
 .logoutButton {
   display: flex;
   width: 100%;

@@ -5,6 +5,7 @@ import {
   APPROVED_PRODUCTS_KEY,
   ORDERS_KEY,
   readList,
+  submitProductForReview,
   SUBMISSIONS_KEY,
   subscribeToStore,
   writeList,
@@ -43,12 +44,10 @@ function Profile() {
       price: Number(form.get("price")),
       stock: Number(form.get("stock")),
       thumbnail: form.get("image").trim() || "https://placehold.co/600x400?text=Product",
-      status: "pending",
-      createdAt: new Date().toISOString(),
     };
 
     try {
-      writeList(SUBMISSIONS_KEY, [product, ...readList(SUBMISSIONS_KEY)]);
+      submitProductForReview(product);
       formElement.reset();
       setError("");
       setSuccess("Your product was sent to the admin for review.");
@@ -65,11 +64,11 @@ function Profile() {
   return (
     <main className={styles.page}>
       <header className={styles.heading}>
-        <div><h1>Customer account</h1><p>Welcome, {user.name}. Manage your product submissions and orders.</p></div>
+        <div><h1>Product Management</h1><p>Welcome, {user.name}. Submit products for admin review and manage your orders.</p></div>
       </header>
 
       <section className={styles.section}>
-        <h2>Submit a product</h2>
+        <h2>Add a product for review</h2>
         <form className={styles.form} onSubmit={submitProduct}>
           <label className={styles.field}>Product name<input name="title" required maxLength="100" /></label>
           <label className={styles.field}>Category<input name="category" required maxLength="60" /></label>

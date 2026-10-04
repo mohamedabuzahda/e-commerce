@@ -18,6 +18,17 @@ export function writeList(key, items) {
   window.dispatchEvent(new CustomEvent("shopease:data-change", { detail: { key } }));
 }
 
+export function submitProductForReview(product) {
+  const submission = {
+    ...product,
+    id: product.id || `customer-${Date.now()}`,
+    status: "pending",
+    createdAt: product.createdAt || new Date().toISOString(),
+  };
+  writeList(SUBMISSIONS_KEY, [submission, ...readList(SUBMISSIONS_KEY)]);
+  return submission;
+}
+
 export function reviewProductSubmission(product, status) {
   const reviewed = { ...product, status, reviewedAt: new Date().toISOString() };
   writeList(SUBMISSIONS_KEY, readList(SUBMISSIONS_KEY).map((item) => item.id === product.id ? reviewed : item));

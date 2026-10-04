@@ -1,25 +1,51 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+export const SHIPPING_FEE = 10;
+export const FREE_SHIPPING_OVER = 100;
+export const PROMOS = {
+  SAVE10: { type: "percent", value: 10, label: "10% off your order" },
+  SAVE20: { type: "percent", value: 20, label: "20% off your order" },
+  FREESHIP: { type: "shipping", value: 0, label: "Free shipping" },
+};
+
+export function calcTotals(items, promoValue) {
+  const round = (value) => Math.round(value * 100) / 100;
+  const promo = typeof promoValue === "string" ? PROMOS[promoValue] : promoValue;
+  const promoType = promo?.type?.toLowerCase();
+  const subtotal = round(items.reduce((sum, item) => sum + item.price * item.quantity, 0));
+  const discount = promoType === "percent"
+    ? Math.min(subtotal, round(subtotal * Number(promo.value) / 100))
+    : promoType === "flat"
+      ? Math.min(subtotal, round(Number(promo.value)))
+      : 0;
+  const freeShipping = subtotal === 0 || subtotal >= FREE_SHIPPING_OVER || promoType === "shipping";
+  const shipping = freeShipping ? 0 : SHIPPING_FEE;
+
+  return { subtotal, discount, shipping, total: round(subtotal - discount + shipping) };
+}
+
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
     items: [],      // المنتجات في السلة
     stockMap: {},   // الـ stock المتبقي
+    promo: null,
   },
   reducers: {
     // تسجيل الـ stock أول ما المنتجات تتحمل
     initStock: (state, action) => {
-      const map = {};
-      action.payload.forEach((p) => {
-        map[p.id] = p.stock;
+      action.payload.forEach((product) => {
+        if (state.stockMap[product.id] === undefined) {
+          state.stockMap[product.id] = product.stock;
+        }
       });
-      state.stockMap = map;
     },
 
     // إضافة للسلة
     addToCart: (state, action) => {
       const product = action.payload;
-      if (state.stockMap[product.id] <= 0) return;
+      const remaining = state.stockMap[product.id] ?? product.stock ?? 0;
+      if (remaining <= 0) return;
 
       const existing = state.items.find((item) => item.id === product.id);
 
@@ -30,7 +56,7 @@ const cartSlice = createSlice({
       }
 
       // نقلل الـ stock
-      state.stockMap[product.id] -= 1;
+      state.stockMap[product.id] = remaining - 1;
     },
 
     // تقليل الكمية
@@ -69,6 +95,20 @@ const cartSlice = createSlice({
           (state.stockMap[item.id] || 0) + item.quantity;
       });
       state.items = [];
+      state.promo = null;
+    },
+
+    applyPromo: (state, action) => {
+      state.promo = action.payload;
+    },
+
+    removePromo: (state) => {
+      state.promo = null;
+    },
+
+    completeOrder: (state) => {
+      state.items = [];
+      state.promo = null;
     },
   },
 });
@@ -79,6 +119,9 @@ export const {
   decreaseQty,
   removeFromCart,
   clearCart,
+  applyPromo,
+  removePromo,
+  completeOrder,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

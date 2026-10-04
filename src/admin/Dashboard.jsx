@@ -113,7 +113,7 @@ function AdminLayout() {
     const navigation = [
         ["dashboard", "Dashboard", "◉"],
         ["users", "Users", "♟"],
-        ["products", "Products", "◆"],
+        ["products", "Product Management", "◆"],
         ["categories", "Categories", "◇"],
         ["orders", "Orders", "▣"],
         ["discounts", "Coupons", "◇"],

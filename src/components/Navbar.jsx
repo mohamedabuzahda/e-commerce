@@ -44,8 +44,6 @@ function Navbar() {
       <div className={styles.links}>
         <Link to="/" className={styles.textLink}>Home</Link>
         <Link to="/products" className={styles.textLink}>Shop</Link>
-        {user?.role === "admin" && <Link to="/admin" className={styles.textLink}>Admin</Link>}
-        {user && user.role !== "admin" && <Link to="/customer" className={styles.textLink}>My Account</Link>}
         {user ? (
           <details className={styles.accountMenu}>
             <summary
@@ -79,6 +77,23 @@ function Navbar() {
                 <span className={styles.profileEmail}>{user.email}</span>
                 <span className={styles.profileRole}>{user.role}</span>
               </div>
+              {user.role === "admin" ? (
+                <Link
+                  className={styles.profileLink}
+                  to="/admin"
+                  onClick={(event) => { event.currentTarget.closest("details").open = false; }}
+                >
+                  Admin dashboard
+                </Link>
+              ) : (
+                <Link
+                  className={styles.profileLink}
+                  to="/customer"
+                  onClick={(event) => { event.currentTarget.closest("details").open = false; }}
+                >
+                  {user.role === "customer" ? "Customer account" : "User account"}
+                </Link>
+              )}
               <button
                 type="button"
                 className={styles.logoutButton}

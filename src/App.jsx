@@ -13,6 +13,7 @@ import NotFound from "./pages/NotFound";
 import AdminDashboard from "./admin/Dashboard";
 import Checkout from "./pages/Checkout";
 import CustomerProfile from "./customer/Profile";
+import SupportChat from "./components/SupportChat";
 
 function RequireAuth({ children }) {
   const { user } = useAuth();
@@ -39,7 +40,7 @@ function AppLayout() {
 
   return (
     <>
-      {!isAuthPage && !isAdminPage && <Navbar />}
+      {!isAuthPage && <Navbar />}
       <Routes>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
@@ -52,6 +53,7 @@ function AppLayout() {
         <Route path="/checkout" element={<RequireAuth><Checkout /></RequireAuth>} />
         <Route path="*" element={<RequireAuth><NotFound /></RequireAuth>} />
       </Routes>
+      {!isAuthPage && <SupportChat />}
       {!isAuthPage && !isAdminPage && <Footer />}
     </>
   );
