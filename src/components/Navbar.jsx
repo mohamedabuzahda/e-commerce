@@ -1,8 +1,16 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { FiChevronDown, FiLogOut, FiShoppingCart } from "react-icons/fi";
+import { FiBell, FiChevronDown, FiLogOut, FiShoppingCart } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
+import {
+  markAllNotificationsAsRead,
+  markNotificationAsRead,
+  NOTIFICATIONS_KEY,
+  readList,
+  subscribeToStore,
+} from "../data/commerceStore";
 import styles from "../styles/Navbar.module.css";
 
 function LanguageFlag({ language }) {
@@ -33,7 +41,32 @@ function Navbar() {
   const { lang, changeLanguage } = useLanguage();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [notifications, setNotifications] = useState([]);
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const unreadCount = notifications.filter((notification) => !notification.readAt).length;
+
+  useEffect(() => {
+    if (!user?.email || user.role === "admin") {
+      setNotifications([]);
+      return undefined;
+    }
+
+    const refreshNotifications = () => {
+      setNotifications(
+        readList(NOTIFICATIONS_KEY).filter(
+          (notification) => notification.recipientEmail?.toLowerCase() === user.email.toLowerCase()
+        )
+      );
+    };
+
+    refreshNotifications();
+    return subscribeToStore(refreshNotifications);
+  }, [user?.email, user?.role]);
+
+  const handleNotificationClick = (notification, event) => {
+    markNotificationAsRead(notification.id);
+    event.currentTarget.closest("details").open = false;
+  };
 
   return (
     <nav className={styles.navbar}>
@@ -115,6 +148,51 @@ function Navbar() {
           <FiShoppingCart aria-hidden="true" />
           {totalItems > 0 && <span className={styles.badge}>{totalItems}</span>}
         </Link>
+        {user && user.role !== "admin" && (
+          <details className={styles.notificationMenu}>
+            <summary
+              className={styles.notificationTrigger}
+              aria-label={`Notifications${unreadCount ? `, ${unreadCount} unread` : ""}`}
+              title="Notifications"
+            >
+              <FiBell aria-hidden="true" />
+              {unreadCount > 0 && <span className={styles.notificationBadge}>{unreadCount > 9 ? "9+" : unreadCount}</span>}
+            </summary>
+            <div className={styles.notificationPanel}>
+              <div className={styles.notificationHeading}>
+                <strong>Notifications</strong>
+                {unreadCount > 0 && (
+                  <button type="button" onClick={() => markAllNotificationsAsRead(user.email)}>
+                    Mark all as read
+                  </button>
+                )}
+              </div>
+              {notifications.length ? (
+                <div className={styles.notificationList}>
+                  {notifications.slice(0, 8).map((notification) => (
+                    <Link
+                      key={notification.id}
+                      to="/customer"
+                      className={`${styles.notificationItem} ${notification.readAt ? "" : styles.notificationUnread}`}
+                      onClick={(event) => handleNotificationClick(notification, event)}
+                    >
+                      <span className={styles.notificationCopy}>
+                        <strong>{notification.title}</strong>
+                        <span>{notification.message}</span>
+                        <time dateTime={notification.createdAt}>
+                          {new Date(notification.createdAt).toLocaleDateString()}
+                        </time>
+                      </span>
+                      {!notification.readAt && <span className={styles.unreadDot} aria-label="Unread" />}
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <p className={styles.noNotifications}>You’re all caught up.</p>
+              )}
+            </div>
+          </details>
+        )}
         <details className={styles.languageMenu}>
           <summary
             className={styles.languageTrigger}

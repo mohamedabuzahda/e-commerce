@@ -272,6 +272,15 @@
     font: 12px Arial, sans-serif;
 }
 
+.bannerCard .bannerImagePreview {
+    width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border: 1px solid #dfe0e8;
+    border-radius: 6px;
+    background: #f7f7fb;
+}
+
 
 /* =========================
    Responsive - 900px

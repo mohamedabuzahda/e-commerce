@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { adminRequest, collection } from "./adminApi";
+import { CATEGORIES_KEY, readList, writeList } from "../data/commerceStore";
 import styles from "./AdminSection.module.css";
+
+const categorySlug = (name) => name.toLowerCase().trim().replaceAll(" ", "-");
 
 function Categories() {
     const [categories, setCategories] = useState([]);
@@ -28,14 +31,24 @@ function Categories() {
         event.preventDefault();
         const formElement = event.currentTarget;
         const form = new FormData(formElement);
+        const name = String(form.get("name") || "").trim();
+        const description = String(form.get("description") || "").trim();
         try {
-            await adminRequest("/api/Category", {
+            const createdCategory = await adminRequest("/api/Category", {
                 method: "POST",
-                body: JSON.stringify({
-                    name: form.get("name"),
-                    description: form.get("description"),
-                }),
+                body: JSON.stringify({ name, description }),
             });
+            const savedCategory = createdCategory?.data || createdCategory || {};
+            const localCategory = {
+                id: savedCategory.id || `local-${categorySlug(name)}`,
+                name: savedCategory.name || name,
+                description: savedCategory.description || description,
+                slug: categorySlug(savedCategory.name || name),
+            };
+            writeList(CATEGORIES_KEY, [
+                localCategory,
+                ...readList(CATEGORIES_KEY).filter((category) => categorySlug(category.name) !== localCategory.slug),
+            ]);
             formElement.reset();
             setShowForm(false);
             await loadCategories();
@@ -45,9 +58,14 @@ function Categories() {
     }
 
     async function deleteCategory(id) {
+        const deletedCategory = categories.find((category) => category.id === id);
         try {
             await adminRequest(`/api/Category/${id}`, { method: "DELETE" });
             setCategories((currentCategories) => currentCategories.filter((category) => category.id !== id));
+            if (deletedCategory) {
+                const deletedSlug = categorySlug(deletedCategory.name);
+                writeList(CATEGORIES_KEY, readList(CATEGORIES_KEY).filter((category) => categorySlug(category.name) !== deletedSlug));
+            }
         } catch (requestError) {
             setError(requestError.message);
         }

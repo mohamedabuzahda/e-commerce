@@ -18,6 +18,19 @@
   --color-muted: #77788c;
   --color-border: #e9e7f1;
   --shadow-soft: 0 12px 34px rgba(42, 34, 92, 0.06);
+  --primary: var(--color-primary);
+  --primary-dark: var(--color-primary-dark);
+  --light: #8c84ff;
+  --soft: var(--color-primary-soft);
+  --white: #ffffff;
+  --bg: var(--color-lavender);
+  --border: var(--color-border);
+  --text: var(--color-ink);
+  --muted: var(--color-muted);
+  --danger: #c03952;
+  --danger-bg: #fae8ee;
+  --success: #21866d;
+  --success-bg: #e2f6ef;
 }
 
 html {

@@ -29,7 +29,7 @@ const Register = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
@@ -66,7 +66,7 @@ const Register = () => {
           password: formData.password,
           role: formData.role,
         };
-        register({ ...account, email: account.email.trim() });
+        await register({ ...account, email: account.email.trim() });
         const destination = location.state?.from;
         navigate(
           destination

@@ -12,7 +12,7 @@ const Login = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email || !password) {
@@ -21,7 +21,7 @@ const Login = () => {
     }
 
     try {
-      login(email.trim(), password);
+      await login(email.trim(), password);
       const destination = location.state?.from;
       navigate(
         destination

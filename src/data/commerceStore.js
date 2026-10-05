@@ -2,7 +2,11 @@ export const USERS_KEY = "shopEaseUsers";
 export const ORDERS_KEY = "shopEaseOrders";
 export const SUBMISSIONS_KEY = "shopEaseProductSubmissions";
 export const APPROVED_PRODUCTS_KEY = "shopEaseApprovedProducts";
+export const PUBLISHED_SUBMISSIONS_KEY = "shopEasePublishedSubmissions";
+export const CATEGORIES_KEY = "shopEaseCategories";
+export const BANNERS_KEY = "shopEaseBanners";
 export const COUPONS_KEY = "shopEaseCoupons";
+export const NOTIFICATIONS_KEY = "shopEaseNotifications";
 
 export function readList(key) {
   try {
@@ -26,7 +30,30 @@ export function submitProductForReview(product) {
     createdAt: product.createdAt || new Date().toISOString(),
   };
   writeList(SUBMISSIONS_KEY, [submission, ...readList(SUBMISSIONS_KEY)]);
+  writeList(PUBLISHED_SUBMISSIONS_KEY, [submission, ...readList(PUBLISHED_SUBMISSIONS_KEY)]);
   return submission;
+}
+
+export function notifyProductAdded(product, message) {
+  if (!product.ownerEmail) return;
+
+  const notificationId = `product-added-${product.id || Date.now()}`;
+  const notifications = readList(NOTIFICATIONS_KEY);
+  if (notifications.some((notification) => notification.id === notificationId)) return;
+
+  writeList(NOTIFICATIONS_KEY, [
+    {
+      id: notificationId,
+      submissionId: product.id || null,
+      recipientEmail: product.ownerEmail.toLowerCase(),
+      type: "product-added",
+      title: "Product added",
+      message,
+      createdAt: new Date().toISOString(),
+      readAt: null,
+    },
+    ...notifications,
+  ]);
 }
 
 export function reviewProductSubmission(product, status) {
@@ -44,12 +71,67 @@ export function reviewProductSubmission(product, status) {
       ...readList(APPROVED_PRODUCTS_KEY).filter((item) => item.id !== product.id),
       approvedProduct,
     ]);
+
+    writeList(PUBLISHED_SUBMISSIONS_KEY, readList(PUBLISHED_SUBMISSIONS_KEY).filter((item) => item.id !== product.id));
+
+    if (product.ownerEmail) {
+      const notifications = readList(NOTIFICATIONS_KEY);
+      const alreadyNotified = notifications.some(
+        (notification) => notification.submissionId === product.id && notification.type === "product-approved"
+      );
+
+      if (!alreadyNotified) {
+        writeList(NOTIFICATIONS_KEY, [
+          {
+            id: `product-approved-${product.id}`,
+            submissionId: product.id,
+            recipientEmail: product.ownerEmail.toLowerCase(),
+            type: "product-approved",
+            title: "Product approved",
+            message: `Your product “${product.title}” was approved and added to the store.`,
+            createdAt: reviewed.reviewedAt,
+            readAt: null,
+          },
+          ...notifications,
+        ]);
+      }
+    }
+  } else if (status === "rejected") {
+    writeList(PUBLISHED_SUBMISSIONS_KEY, readList(PUBLISHED_SUBMISSIONS_KEY).filter((item) => item.id !== product.id));
+  }
+}
+
+export function markNotificationAsRead(notificationId) {
+  const notifications = readList(NOTIFICATIONS_KEY);
+  const nextNotifications = notifications.map((notification) =>
+    notification.id === notificationId && !notification.readAt
+      ? { ...notification, readAt: new Date().toISOString() }
+      : notification
+  );
+
+  if (nextNotifications.some((notification, index) => notification !== notifications[index])) {
+    writeList(NOTIFICATIONS_KEY, nextNotifications);
+  }
+}
+
+export function markAllNotificationsAsRead(email) {
+  const normalizedEmail = email.toLowerCase();
+  const notifications = readList(NOTIFICATIONS_KEY);
+  const readAt = new Date().toISOString();
+  const nextNotifications = notifications.map((notification) =>
+    notification.recipientEmail?.toLowerCase() === normalizedEmail && !notification.readAt
+      ? { ...notification, readAt }
+      : notification
+  );
+
+  if (nextNotifications.some((notification, index) => notification !== notifications[index])) {
+    writeList(NOTIFICATIONS_KEY, nextNotifications);
   }
 }
 
 export function subscribeToStore(callback) {
   const onStorageChange = (event) => {
-    if (!event.key || [USERS_KEY, ORDERS_KEY, SUBMISSIONS_KEY, APPROVED_PRODUCTS_KEY, COUPONS_KEY].includes(event.key)) {
+    if (!event.key || [USERS_KEY, ORDERS_KEY, SUBMISSIONS_KEY, APPROVED_PRODUCTS_KEY, PUBLISHED_SUBMISSIONS_KEY, CATEGORIES_KEY, BANNERS_KEY, COUPONS_KEY, NOTIFICATIONS_KEY].includes(event.key)) {
       callback();
     }
   };

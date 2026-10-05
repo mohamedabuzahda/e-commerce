@@ -1,7 +1,7 @@
 .page {
   width: min(1120px, calc(100% - 40px));
   margin: 40px auto 72px;
-  color: #222638;
+  color: var(--text);
 }
 
 .heading {
@@ -14,12 +14,13 @@
 
 .heading h1 {
   margin: 0;
+  color: var(--text);
   font-size: 30px;
 }
 
 .heading p,
 .muted {
-  color: #707687;
+  color: var(--muted);
 }
 
 .section {
@@ -28,6 +29,7 @@
 
 .section h2 {
   margin: 0 0 16px;
+  color: var(--text);
   font-size: 20px;
 }
 
@@ -36,14 +38,16 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
   padding: 20px;
-  border: 1px solid #e3e6ed;
-  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--white);
+  box-shadow: var(--shadow-soft);
 }
 
 .field {
   display: grid;
   gap: 7px;
-  color: #4d5362;
+  color: var(--muted);
   font-size: 13px;
   font-weight: 600;
 }
@@ -53,13 +57,52 @@
 .field select {
   width: 100%;
   min-width: 0;
-  border: 1px solid #d8dce5;
-  border-radius: 5px;
   padding: 11px 12px;
-  color: #222638;
-  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--text);
   font: inherit;
   font-weight: 400;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: var(--primary);
+  outline: 3px solid rgba(108, 99, 255, 0.15);
+}
+
+.field .fileInput {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.field .fileInput::file-selector-button {
+  margin-inline-end: 10px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--soft);
+  color: var(--primary-dark);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.fieldHint {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.imagePreview {
+  width: 120px;
+  height: 100px;
+  object-fit: contain;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
 }
 
 .field textarea {
@@ -87,26 +130,34 @@
 .dangerButton {
   width: fit-content;
   border: 0;
-  border-radius: 5px;
+  border-radius: 8px;
   padding: 11px 16px;
   color: #fff;
-  background: #176b55;
+  background: var(--primary);
   cursor: pointer;
   font: inherit;
   font-size: 13px;
   font-weight: 700;
 }
 
+.button:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
 .secondaryButton {
-  border: 1px solid #176b55;
-  color: #176b55;
-  background: #fff;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  background: var(--white);
+}
+
+.secondaryButton:hover:not(:disabled) {
+  background: var(--soft);
 }
 
 .dangerButton {
-  border: 1px solid #c33e4c;
-  color: #b92f3e;
-  background: #fff;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  background: var(--white);
 }
 
 .button:disabled,
@@ -118,27 +169,29 @@
 
 .tableWrap {
   overflow-x: auto;
-  border: 1px solid #e3e6ed;
-  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--white);
 }
 
 .table {
   width: 100%;
   min-width: 650px;
   border-collapse: collapse;
+  color: var(--text);
   text-align: left;
 }
 
 .table th,
 .table td {
   padding: 13px 15px;
-  border-bottom: 1px solid #eceef2;
+  border-bottom: 1px solid var(--border);
   vertical-align: middle;
 }
 
 .table th {
-  color: #5b6170;
-  background: #f7f8fa;
+  background: var(--bg);
+  color: var(--muted);
   font-size: 12px;
   text-transform: uppercase;
 }
@@ -151,31 +204,31 @@
   display: inline-flex;
   border-radius: 4px;
   padding: 5px 8px;
-  color: #765300;
   background: #fff2c2;
+  color: #765300;
   font-size: 12px;
   font-weight: 700;
   text-transform: capitalize;
 }
 
 .statusApproved {
-  color: #126044;
-  background: #dff4e9;
+  background: var(--success-bg);
+  color: var(--success);
 }
 
 .statusRejected,
 .statusCancelled {
-  color: #9b2734;
-  background: #fde6e8;
+  background: var(--danger-bg);
+  color: var(--danger);
 }
 
 .error {
-  color: #b92f3e;
+  color: var(--danger);
   font-size: 13px;
 }
 
 .success {
-  color: #176b55;
+  color: var(--success);
   font-size: 13px;
 }
 

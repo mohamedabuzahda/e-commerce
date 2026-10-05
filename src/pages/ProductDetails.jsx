@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
+import { adminRequest } from "../admin/adminApi";
 import { addToCart } from "../store/cartSlice";
 import styles from "../styles/ProductDetails.module.css";
-import { APPROVED_PRODUCTS_KEY, readList } from "../data/commerceStore";
+import { APPROVED_PRODUCTS_KEY, PUBLISHED_SUBMISSIONS_KEY, readList } from "../data/commerceStore";
 
 function ProductDetails() {
   const { id } = useParams();
@@ -16,9 +17,12 @@ function ProductDetails() {
   useEffect(() => {
     setLoading(true);
 
-    const approvedProduct = readList(APPROVED_PRODUCTS_KEY).find((item) => String(item.id) === id);
-    if (approvedProduct) {
-      setProduct(approvedProduct);
+    const customerProduct = [
+      ...readList(PUBLISHED_SUBMISSIONS_KEY),
+      ...readList(APPROVED_PRODUCTS_KEY),
+    ].find((item) => String(item.id) === id);
+    if (customerProduct) {
+      setProduct(customerProduct);
       setLoading(false);
       return;
     }
@@ -29,9 +33,23 @@ function ProductDetails() {
         setProduct(res.data);
         setLoading(false);
       })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
+      .catch(() => {
+        adminRequest(`/api/Products/${id}`)
+          .then((response) => {
+            const databaseProduct = response?.data || response;
+            const images = Array.isArray(databaseProduct.images) ? databaseProduct.images : [];
+            setProduct({
+              ...databaseProduct,
+              title: databaseProduct.title || databaseProduct.name,
+              category: typeof databaseProduct.category === "string"
+                ? databaseProduct.category
+                : databaseProduct.category?.name || databaseProduct.categoryName || "Other",
+              stock: databaseProduct.stock ?? databaseProduct.stockQuantity ?? 0,
+              thumbnail: databaseProduct.thumbnail || databaseProduct.image || images.find((image) => image.isPrimary)?.imageUrl || images[0]?.imageUrl || "https://placehold.co/600x400?text=Product",
+            });
+          })
+          .catch(() => setProduct(null))
+          .finally(() => setLoading(false));
       });
   }, [id]);
 

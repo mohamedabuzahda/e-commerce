@@ -38,6 +38,94 @@
   font-size: 13px;
 }
 
+.filters {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(150px, 190px) minmax(150px, 190px) auto;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.searchForm {
+  display: flex;
+  min-width: 0;
+}
+
+.searchForm input,
+.filters select {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #e2dfed;
+  border-radius: 8px;
+  background: #fff;
+  color: #202046;
+  font-size: 13px;
+}
+
+.searchForm input {
+  border-radius: 8px 0 0 8px;
+}
+
+.searchForm input:focus,
+.filters select:focus {
+  z-index: 1;
+  border-color: #6c63ff;
+  outline: 3px solid rgba(108, 99, 255, 0.16);
+  outline-offset: 0;
+}
+
+.searchForm button {
+  display: grid;
+  width: 46px;
+  height: 44px;
+  flex: 0 0 46px;
+  place-items: center;
+  border: 0;
+  border-radius: 0 8px 8px 0;
+  background: #6c63ff;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.searchForm button:hover {
+  background: #554be8;
+}
+
+.searchForm button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.clearButton {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 12px;
+  border: 1px solid #e2dfed;
+  border-radius: 8px;
+  background: #fff;
+  color: #55566a;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.clearButton:hover {
+  border-color: #c9c4f5;
+  background: #f8f7ff;
+  color: #554be8;
+}
+
+.clearButton svg {
+  width: 16px;
+  height: 16px;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -51,6 +139,30 @@
   text-align: center;
   font-size: 18px;
   color: #77788c;
+}
+
+.emptyState {
+  display: grid;
+  min-height: 260px;
+  justify-items: center;
+  align-content: center;
+  gap: 8px;
+  border: 1px dashed #d9d5e8;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.65);
+  text-align: center;
+}
+
+.emptyState h3 {
+  margin: 0;
+  color: #202046;
+  font-size: 18px;
+}
+
+.emptyState p {
+  margin: 0 0 8px;
+  color: #77788c;
+  font-size: 14px;
 }
 
 /* Pagination */
@@ -103,6 +215,14 @@
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .searchForm {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (max-width: 520px) {
@@ -116,6 +236,14 @@
 
   .catalogCount {
     font-size: 11px;
+  }
+
+  .filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .searchForm {
+    grid-column: auto;
   }
 
   .grid {
