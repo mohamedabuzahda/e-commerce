@@ -8,6 +8,26 @@
   border: 1px solid #eeecf4;
 }
 
+.favorite {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 3;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #eeecf4;
+  border-radius: 50%;
+  background: #fff;
+  color: #b54668;
+  font-size: 21px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.favorite:hover {
+  background: #fae8ee;
+}
+
 .card:hover {
   transform: translateY(-2px);
   border-color: #d9d5ff;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { adminRequest, collection } from "../admin/adminApi";
 import {
@@ -71,12 +71,14 @@ function compressProductImage(file) {
 }
 
 function Profile() {
-  const { user, apiSessionLoading } = useAuth();
+  const { user, updateProfile, apiSessionLoading } = useAuth();
   const location = useLocation();
   const [submissions, setSubmissions] = useState([]);
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(location.state?.orderPlaced ? "Your order was placed." : "");
+  const [success, setSuccess] = useState(
+    location.state?.orderPlaced ? "Your order was placed." : ""
+  );
   const [imageData, setImageData] = useState("");
   const [imagePreview, setImagePreview] = useState("");
   const [imageLoading, setImageLoading] = useState(false);
@@ -84,15 +86,54 @@ function Profile() {
   const [savedCategories, setSavedCategories] = useState(() => readList(CATEGORIES_KEY));
   const [categoryError, setCategoryError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [profileForm, setProfileForm] = useState(() => ({
+    name: user.name || "",
+    phone: user.phone || "",
+    address: user.address || "",
+    city: user.city || "",
+  }));
+  const [profileMessage, setProfileMessage] = useState("");
 
+  // جلب الأوردرات من الـ API + المنتجات المقدمة من localStorage
   useEffect(() => {
-    const refresh = () => {
-      setSubmissions(readList(SUBMISSIONS_KEY).filter((item) => item.ownerEmail === user.email));
-      setOrders(readList(ORDERS_KEY).filter((order) => order.customerEmail === user.email));
+    if (apiSessionLoading || !user) return;
+
+    adminRequest("/api/Orders")
+      .then((response) => {
+        const allOrders = collection(response);
+        const list = Array.isArray(allOrders) ? allOrders : [];
+
+        const myOrders = list.filter((order) => {
+          const email = (
+            order.customerEmail ||
+            order.userEmail ||
+            order.email ||
+            ""
+          ).toLowerCase();
+          return email === user.email?.toLowerCase() || order.userId === user.id;
+        });
+
+        setOrders(myOrders);
+      })
+      .catch(() => {
+        // احتياطي من localStorage
+        setOrders(
+          readList(ORDERS_KEY).filter(
+            (order) => order.customerEmail === user.email
+          )
+        );
+      });
+
+    const refreshSubmissions = () => {
+      setSubmissions(
+        readList(SUBMISSIONS_KEY).filter(
+          (item) => item.ownerEmail === user.email
+        )
+      );
     };
-    refresh();
-    return subscribeToStore(refresh);
-  }, [user.email]);
+    refreshSubmissions();
+    return subscribeToStore(refreshSubmissions);
+  }, [user, apiSessionLoading]);
 
   useEffect(() => {
     return subscribeToStore(() => setSavedCategories(readList(CATEGORIES_KEY)));
@@ -108,13 +149,30 @@ function Profile() {
         setCategoryError("");
       })
       .catch((categoryRequestError) => {
-        setCategoryError(readList(CATEGORIES_KEY).length
-          ? "Showing saved database categories; the latest categories could not be refreshed."
-          : `Database categories could not be loaded: ${categoryRequestError.message}`);
+        setCategoryError(
+          readList(CATEGORIES_KEY).length
+            ? "Showing saved database categories; the latest categories could not be refreshed."
+            : `Database categories could not be loaded: ${categoryRequestError.message}`
+        );
       });
   }, [apiSessionLoading]);
 
   const categories = normalizeCategoryOptions(databaseCategories, savedCategories);
+
+  function saveProfile(event) {
+    event.preventDefault();
+    try {
+      updateProfile({
+        name: profileForm.name.trim(),
+        phone: profileForm.phone.trim(),
+        address: profileForm.address.trim(),
+        city: profileForm.city.trim(),
+      });
+      setProfileMessage("Profile details saved in this browser.");
+    } catch (profileError) {
+      setProfileMessage(profileError.message);
+    }
+  }
 
   function handleImageChange(event) {
     const file = event.target.files?.[0];
@@ -139,9 +197,9 @@ function Profile() {
     setImageLoading(true);
     compressProductImage(file)
       .then((dataUrl) => {
-      setImageData(dataUrl);
-      setImagePreview(dataUrl);
-      setImageLoading(false);
+        setImageData(dataUrl);
+        setImagePreview(dataUrl);
+        setImageLoading(false);
       })
       .catch((imageError) => {
         setError(imageError.message);
@@ -157,6 +215,7 @@ function Profile() {
     const categoryId = form.get("category");
     const title = form.get("title").trim();
     const selectedCategory = categories.find((category) => category.id === categoryId);
+
     const localProduct = {
       ownerId: user.id || user.email,
       ownerName: user.name,
@@ -182,6 +241,7 @@ function Profile() {
           categoryId,
         }),
       });
+
       const createdProduct = response?.data || response;
       const publishedProduct = publishProductToShop({
         ...localProduct,
@@ -203,14 +263,18 @@ function Profile() {
         { id: publishedProduct.id, ownerEmail: user.email },
         `Your product “${title}” was added to the store database.`
       );
+
       formElement.reset();
       setImageData("");
       setImagePreview("");
       setSuccess(`“${title}” was added to the database products.`);
     } catch (submitError) {
-      const authRejected = submitError.status === 401
-        || submitError.status === 403
-        || /database API rejected this customer account|database session could not be renewed/i.test(submitError.message);
+      const authRejected =
+        submitError.status === 401 ||
+        submitError.status === 403 ||
+        /database API rejected this customer account|database session could not be renewed/i.test(
+          submitError.message
+        );
 
       if (authRejected) {
         try {
@@ -222,10 +286,14 @@ function Profile() {
           formElement.reset();
           setImageData("");
           setImagePreview("");
-          setError("The database API denied access. This product is now visible in Shop and saved locally, but is not synchronized with the database.");
+          setError(
+            "The database API denied access. This product is now visible in Shop and saved locally, but is not synchronized with the database."
+          );
           setSuccess(`“${title}” is now visible in Shop and the admin review queue.`);
         } catch {
-          setError("The database API denied access and the product could not be saved locally either.");
+          setError(
+            "The database API denied access and the product could not be saved locally either."
+          );
         }
       } else {
         setError(`Product was not saved: ${submitError.message}`);
@@ -236,25 +304,116 @@ function Profile() {
   }
 
   function deleteProduct(product) {
-    writeList(SUBMISSIONS_KEY, readList(SUBMISSIONS_KEY).filter((item) => item.id !== product.id));
-    writeList(APPROVED_PRODUCTS_KEY, readList(APPROVED_PRODUCTS_KEY).filter((item) => item.id !== product.id));
-    writeList(PUBLISHED_SUBMISSIONS_KEY, readList(PUBLISHED_SUBMISSIONS_KEY).filter((item) => item.id !== product.id));
+    writeList(
+      SUBMISSIONS_KEY,
+      readList(SUBMISSIONS_KEY).filter((item) => item.id !== product.id)
+    );
+    writeList(
+      APPROVED_PRODUCTS_KEY,
+      readList(APPROVED_PRODUCTS_KEY).filter((item) => item.id !== product.id)
+    );
+    writeList(
+      PUBLISHED_SUBMISSIONS_KEY,
+      readList(PUBLISHED_SUBMISSIONS_KEY).filter((item) => item.id !== product.id)
+    );
   }
 
   return (
     <main className={styles.page}>
       <header className={styles.heading}>
-        <div><h1>Product Management</h1><p>Welcome, {user.name}. Submit products for admin review and manage your orders.</p></div>
+        <div>
+          <h1>Product Management</h1>
+          <p>
+            Welcome, {user.name}. Submit products for admin review and manage your orders.
+          </p>
+        </div>
       </header>
 
       <section className={styles.section}>
-          <h2>Add a product</h2>
-          <p className={styles.fieldHint}>{apiSessionLoading ? "Restoring your database session..." : "Your product is saved directly to the store database."}</p>
+        <h2>Profile details</h2>
+        <form className={styles.form} onSubmit={saveProfile}>
+          <label className={styles.field}>
+            Full name
+            <input
+              value={profileForm.name}
+              onChange={(event) => setProfileForm({ ...profileForm, name: event.target.value })}
+              required
+              maxLength="100"
+            />
+          </label>
+          <label className={styles.field}>
+            Phone
+            <input
+              type="tel"
+              value={profileForm.phone}
+              onChange={(event) => setProfileForm({ ...profileForm, phone: event.target.value })}
+              autoComplete="tel"
+            />
+          </label>
+          <label className={`${styles.field} ${styles.wide}`}>
+            Street address
+            <input
+              value={profileForm.address}
+              onChange={(event) => setProfileForm({ ...profileForm, address: event.target.value })}
+              autoComplete="street-address"
+            />
+          </label>
+          <label className={styles.field}>
+            City
+            <input
+              value={profileForm.city}
+              onChange={(event) => setProfileForm({ ...profileForm, city: event.target.value })}
+              autoComplete="address-level2"
+            />
+          </label>
+          <div className={styles.wide}>
+            <button className={styles.button} type="submit">Save profile</button>
+            {profileMessage && <p role="status">{profileMessage}</p>}
+          </div>
+        </form>
+        <p className={styles.fieldHint}>
+          Payment card details are not stored in your profile. Saving cards safely requires a payment provider.
+        </p>
+      </section>
+
+      <section className={styles.section}>
+        <h2>Add a product</h2>
+        <p className={styles.fieldHint}>
+          {apiSessionLoading
+            ? "Restoring your database session..."
+            : "Your product is saved directly to the store database."}
+        </p>
+
         <form className={styles.form} onSubmit={submitProduct}>
-          <label className={styles.field}>Product name<input name="title" required maxLength="100" /></label>
-          <label className={styles.field}>Category<select name="category" required defaultValue="" disabled={!categories.length}><option value="" disabled>{categories.length ? "Choose a category" : "Database categories unavailable"}</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
-          <label className={styles.field}>Price<input name="price" type="number" min="0.01" step="0.01" required /></label>
-          <label className={styles.field}>Available stock<input name="stock" type="number" min="1" step="1" required /></label>
+          <label className={styles.field}>
+            Product name
+            <input name="title" required maxLength="100" />
+          </label>
+
+          <label className={styles.field}>
+            Category
+            <select name="category" required defaultValue="" disabled={!categories.length}>
+              <option value="" disabled>
+                {categories.length ? "Choose a category" : "Database categories unavailable"}
+              </option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className={styles.field}>
+            Price
+            <input name="price" type="number" min="0.01" step="0.01" required />
+          </label>
+
+          <label className={styles.field}>
+            Available stock
+            <input name="stock" type="number" min="1" step="1" required />
+          </label>
+
           <div className={styles.field}>
             <label htmlFor="product-image">Product image</label>
             <input
@@ -267,14 +426,27 @@ function Profile() {
             />
             <span className={styles.fieldHint}>JPG, PNG, or WEBP. Maximum size: 2 MB.</span>
             {imageLoading && <span className={styles.fieldHint}>Preparing image...</span>}
-            {imagePreview && <img className={styles.imagePreview} src={imagePreview} alt="Product preview" />}
+            {imagePreview && (
+              <img className={styles.imagePreview} src={imagePreview} alt="Product preview" />
+            )}
           </div>
-          <label className={`${styles.field} ${styles.wide}`}>Description<textarea name="description" required maxLength="1000" /></label>
+
+          <label className={`${styles.field} ${styles.wide}`}>
+            Description
+            <textarea name="description" required maxLength="1000" />
+          </label>
+
           <div className={styles.wide}>
             {categoryError && <p className={styles.error}>{categoryError}</p>}
             {error && <p className={styles.error}>{error}</p>}
             {success && <p className={styles.success}>{success}</p>}
-            <button className={styles.button} type="submit" disabled={imageLoading || submitting || apiSessionLoading || !categories.length}>{submitting || apiSessionLoading ? "Connecting..." : "Add product"}</button>
+            <button
+              className={styles.button}
+              type="submit"
+              disabled={imageLoading || submitting || apiSessionLoading || !categories.length}
+            >
+              {submitting || apiSessionLoading ? "Connecting..." : "Add product"}
+            </button>
           </div>
         </form>
       </section>
@@ -283,15 +455,56 @@ function Profile() {
         <h2>My product submissions</h2>
         <div className={styles.tableWrap}>
           <table className={styles.table}>
-            <thead><tr><th>Product</th><th>Price</th><th>Status</th><th>Action</th></tr></thead>
-            <tbody>{submissions.length ? submissions.map((product) => (
-              <tr key={product.id}>
-                <td><strong>{product.title}</strong><br /><span className={styles.muted}>{product.category}</span></td>
-                <td>${product.price.toFixed(2)}</td>
-                <td><span className={`${styles.status} ${product.status === "approved" ? styles.statusApproved : product.status === "rejected" ? styles.statusRejected : ""}`}>{product.status}</span></td>
-                <td><button className={styles.dangerButton} type="button" onClick={() => deleteProduct(product)}>Delete</button></td>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Action</th>
               </tr>
-            )) : <tr><td colSpan="4" className={styles.muted}>You have not submitted any products.</td></tr>}</tbody>
+            </thead>
+            <tbody>
+              {submissions.length ? (
+                submissions.map((product) => (
+                  <tr key={product.id}>
+                    <td>
+                      <strong>{product.title}</strong>
+                      <br />
+                      <span className={styles.muted}>{product.category}</span>
+                    </td>
+                    <td>${product.price.toFixed(2)}</td>
+                    <td>
+                      <span
+                        className={`${styles.status} ${
+                          product.status === "approved"
+                            ? styles.statusApproved
+                            : product.status === "rejected"
+                            ? styles.statusRejected
+                            : ""
+                        }`}
+                      >
+                        {product.status}
+                      </span>
+                    </td>
+                    <td>
+                      <button
+                        className={styles.dangerButton}
+                        type="button"
+                        onClick={() => deleteProduct(product)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className={styles.muted}>
+                    You have not submitted any products.
+                  </td>
+                </tr>
+              )}
+            </tbody>
           </table>
         </div>
       </section>
@@ -300,16 +513,59 @@ function Profile() {
         <h2>My orders</h2>
         <div className={styles.tableWrap}>
           <table className={styles.table}>
-            <thead><tr><th>Order</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th></tr></thead>
-            <tbody>{orders.length ? orders.map((order) => (
-              <tr key={order.id}>
-                <td><strong>{order.id}</strong></td>
-                <td>{new Date(order.createdAt).toLocaleDateString()}</td>
-                <td>{order.items.reduce((count, item) => count + item.quantity, 0)}</td>
-                <td>${order.total.toFixed(2)}</td>
-                <td><span className={`${styles.status} ${order.status === "Delivered" ? styles.statusApproved : order.status === "Cancelled" ? styles.statusCancelled : ""}`}>{order.status}</span></td>
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Date</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Status</th>
               </tr>
-            )) : <tr><td colSpan="5" className={styles.muted}>No orders yet.</td></tr>}</tbody>
+            </thead>
+            <tbody>
+              {orders.length ? (
+                orders.map((order) => (
+                  <tr key={order.id}>
+                    <td>
+                      <Link to={`/orders/${encodeURIComponent(order.id)}`}><strong>{order.id}</strong></Link>
+                    </td>
+                    <td>
+                      {order.createdAt
+                        ? new Date(order.createdAt).toLocaleDateString()
+                        : "-"}
+                    </td>
+                    <td>
+                      {Array.isArray(order.items)
+                        ? order.items.reduce((count, item) => count + (item.quantity || 0), 0)
+                        : order.itemsCount || "-"}
+                    </td>
+                    <td>
+                      $
+                      {Number(order.total || order.totalAmount || 0).toFixed(2)}
+                    </td>
+                    <td>
+                      <span
+                        className={`${styles.status} ${
+                          order.status === "Delivered"
+                            ? styles.statusApproved
+                            : order.status === "Cancelled"
+                            ? styles.statusCancelled
+                            : ""
+                        }`}
+                      >
+                        {order.status || "Pending"}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className={styles.muted}>
+                    No orders yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
           </table>
         </div>
       </section>

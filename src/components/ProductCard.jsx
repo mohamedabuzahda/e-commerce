@@ -1,17 +1,36 @@
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { isProductInWishlist, toggleWishlistProduct } from "../data/commerceStore";
 import { addToCart } from "../store/cartSlice";
 import styles from "../styles/ProductCard.module.css";
 
 function ProductCard({ product }) {
   const dispatch = useDispatch();
   const stockMap = useSelector((state) => state.cart.stockMap);
+  const { user } = useAuth();
+  const [saved, setSaved] = useState(() => isProductInWishlist(product.id, user?.email));
   const remainingStock = stockMap[product.id] ?? product.stock;
   const isOutOfStock = remainingStock <= 0;
   const rating = Number(product.rating) || 0;
 
   return (
     <div className={styles.card}>
+      {user && (
+        <button
+          type="button"
+          className={styles.favorite}
+          aria-label={saved ? "Remove from wishlist" : "Add to wishlist"}
+          aria-pressed={saved}
+          onClick={() => {
+            const added = toggleWishlistProduct(product, user.email);
+            setSaved(added);
+          }}
+        >
+          {saved ? "♥" : "♡"}
+        </button>
+      )}
       <span className={`${styles.badge} ${isOutOfStock ? styles.out : styles.in}`}>
         {isOutOfStock ? "Out of stock" : "In stock"}
       </span>

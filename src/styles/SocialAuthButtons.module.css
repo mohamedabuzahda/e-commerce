@@ -1,0 +1,43 @@
+.buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.googleButton {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.facebookButton {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 8px;
+  border: 1px solid #e2e0eb;
+  border-radius: 7px;
+  background: #fff;
+  color: #77788c;
+  font-size: 13px;
+  cursor: not-allowed;
+}
+
+.error {
+  display: block;
+  margin-top: 10px;
+  color: #d32f2f;
+  font-size: 13px;
+}
+
+@media (max-width: 390px) {
+  .buttons {
+    grid-template-columns: 1fr;
+  }
+}

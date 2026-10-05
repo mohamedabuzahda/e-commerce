@@ -77,6 +77,11 @@ function Navbar() {
       <div className={styles.links}>
         <Link to="/" className={styles.textLink}>Home</Link>
         <Link to="/products" className={styles.textLink}>Shop</Link>
+        {user && user.role !== "admin" && (
+          <>
+            <Link to="/wishlist" className={styles.textLink}>Wishlist</Link>
+          </>
+        )}
         {user ? (
           <details className={styles.accountMenu}>
             <summary
@@ -118,10 +123,18 @@ function Navbar() {
                 >
                   Admin dashboard
                 </Link>
+              ) : user.role === "seller" ? (
+                <Link
+                  className={styles.profileLink}
+                  to="/seller"
+                  onClick={(event) => { event.currentTarget.closest("details").open = false; }}
+                >
+                  Seller dashboard
+                </Link>
               ) : (
                 <Link
                   className={styles.profileLink}
-                  to="/customer"
+                  to={user.role === "seller" ? "/seller" : "/customer"}
                   onClick={(event) => { event.currentTarget.closest("details").open = false; }}
                 >
                   My account

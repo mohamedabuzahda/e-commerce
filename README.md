@@ -2,6 +2,15 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
+## Google sign-in
+
+Set `VITE_GOOGLE_CLIENT_ID` in the Vercel project environment variables for every
+deployment environment, then redeploy. Add the deployed site origin to the
+authorized JavaScript origins in Google Cloud Console. The API must expose
+`POST /api/Auth/google-login`, accept `{ "idToken": "<Google ID token>", "role": "Customer" }`,
+and return an access token and account email. Facebook sign-in remains disabled
+until the application has a Facebook App ID and a matching API endpoint.
+
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)

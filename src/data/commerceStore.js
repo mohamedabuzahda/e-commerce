@@ -7,6 +7,8 @@ export const CATEGORIES_KEY = "shopEaseCategories";
 export const BANNERS_KEY = "shopEaseBanners";
 export const COUPONS_KEY = "shopEaseCoupons";
 export const NOTIFICATIONS_KEY = "shopEaseNotifications";
+export const WISHLIST_KEY = "shopEaseWishlist";
+export const REVIEWS_KEY = "shopEaseReviews";
 
 export function readList(key) {
   try {
@@ -61,6 +63,90 @@ export function findActiveCoupon(code) {
       String(coupon.code || "").trim().toUpperCase() === normalizedCode
       && String(coupon.status || "").toLowerCase() === "active"
   ) || null;
+}
+
+export function getUserWishlist(email) {
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+  return readList(WISHLIST_KEY).filter(
+    (item) => item.ownerEmail?.toLowerCase() === normalizedEmail
+  );
+}
+
+export function isProductInWishlist(productId, email) {
+  return getUserWishlist(email).some((item) => String(item.id) === String(productId));
+}
+
+export function toggleWishlistProduct(product, email) {
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+  if (!normalizedEmail) throw new Error("Sign in to save products to your wishlist.");
+
+  const wishlist = readList(WISHLIST_KEY);
+  const existing = wishlist.some(
+    (item) => item.ownerEmail?.toLowerCase() === normalizedEmail
+      && String(item.id) === String(product.id)
+  );
+  const updated = existing
+    ? wishlist.filter(
+        (item) => item.ownerEmail?.toLowerCase() !== normalizedEmail
+          || String(item.id) !== String(product.id)
+      )
+    : [{ ...product, ownerEmail: normalizedEmail }, ...wishlist];
+
+  writeList(WISHLIST_KEY, updated);
+  return !existing;
+}
+
+export function readProductReviews(productId) {
+  return readList(REVIEWS_KEY)
+    .filter((review) => String(review.productId) === String(productId))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+
+export function saveProductReview(review) {
+  const normalizedEmail = String(review.customerEmail || "").trim().toLowerCase();
+  if (!normalizedEmail) throw new Error("Sign in to submit a review.");
+  if (!Number.isInteger(review.rating) || review.rating < 1 || review.rating > 5) {
+    throw new Error("Choose a rating from 1 to 5 stars.");
+  }
+
+  const reviews = readList(REVIEWS_KEY);
+  const existing = reviews.find(
+    (item) => String(item.productId) === String(review.productId)
+      && item.customerEmail?.toLowerCase() === normalizedEmail
+  );
+  const savedReview = {
+    ...existing,
+    ...review,
+    id: existing?.id || `review-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    customerEmail: normalizedEmail,
+    createdAt: new Date().toISOString(),
+  };
+
+  writeList(REVIEWS_KEY, [
+    savedReview,
+    ...reviews.filter((item) => item.id !== existing?.id),
+  ]);
+  return savedReview;
+}
+
+export function createNotification(recipientEmail, title, message, type = "order-update", referenceId = null) {
+  const normalizedEmail = String(recipientEmail || "").trim().toLowerCase();
+  if (!normalizedEmail) return;
+
+  const notifications = readList(NOTIFICATIONS_KEY);
+  writeList(NOTIFICATIONS_KEY, [
+    {
+      id: `${type}-${referenceId || Date.now()}-${Date.now()}`,
+      submissionId: referenceId,
+      recipientEmail: normalizedEmail,
+      type,
+      title,
+      message,
+      createdAt: new Date().toISOString(),
+      readAt: null,
+    },
+    ...notifications,
+  ]);
 }
 
 export function notifyProductAdded(product, message) {
@@ -160,7 +246,7 @@ export function markAllNotificationsAsRead(email) {
 
 export function subscribeToStore(callback) {
   const onStorageChange = (event) => {
-    if (!event.key || [USERS_KEY, ORDERS_KEY, SUBMISSIONS_KEY, APPROVED_PRODUCTS_KEY, PUBLISHED_SUBMISSIONS_KEY, CATEGORIES_KEY, BANNERS_KEY, COUPONS_KEY, NOTIFICATIONS_KEY].includes(event.key)) {
+    if (!event.key || [USERS_KEY, ORDERS_KEY, SUBMISSIONS_KEY, APPROVED_PRODUCTS_KEY, PUBLISHED_SUBMISSIONS_KEY, CATEGORIES_KEY, BANNERS_KEY, COUPONS_KEY, NOTIFICATIONS_KEY, WISHLIST_KEY, REVIEWS_KEY].includes(event.key)) {
       callback();
     }
   };

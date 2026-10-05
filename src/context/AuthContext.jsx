@@ -74,7 +74,7 @@ export function AuthProvider({ children }) {
           setUser(remoteSession.account);
         }
       } catch {
-        // Keep the local session active; protected requests will show their API error.
+        // Keep local session
       } finally {
         recoveryInProgress = false;
         setApiSessionLoading(false);
@@ -96,11 +96,32 @@ export function AuthProvider({ children }) {
       name: account.name,
       email: account.email,
       role: account.role,
+      phone: account.phone || "",
+      address: account.address || "",
+      city: account.city || "",
     };
     localStorage.setItem(AUTH_KEY, JSON.stringify(activeUser));
     if (token) localStorage.setItem(TOKEN_KEY, token);
     else localStorage.removeItem(TOKEN_KEY);
     setUser(activeUser);
+  };
+
+  const updateProfile = (changes) => {
+    if (!user?.email) throw new Error("Sign in to update your profile.");
+
+    const updatedUser = { ...user, ...changes };
+    const users = readList(USERS_KEY);
+    const updatedUsers = users.some(
+      (account) => account.email?.toLowerCase() === user.email.toLowerCase()
+    )
+      ? users.map((account) => account.email?.toLowerCase() === user.email.toLowerCase()
+          ? { ...account, ...changes }
+          : account)
+      : [...users, updatedUser];
+
+    writeList(USERS_KEY, updatedUsers);
+    localStorage.setItem(AUTH_KEY, JSON.stringify(updatedUser));
+    setUser(updatedUser);
   };
 
   const register = async (account) => {
@@ -150,7 +171,12 @@ export function AuthProvider({ children }) {
       const remoteSession = await authenticateRemote(email.trim(), password, account);
       startSession(remoteSession.account, remoteSession.token);
     } catch (remoteError) {
-      if (account && account.password === password && account.role !== "admin" && remoteError.message.includes("(401)")) {
+      if (
+        account &&
+        account.password === password &&
+        account.role !== "admin" &&
+        remoteError.message.includes("(401)")
+      ) {
         const remoteSession = await registerRemoteCustomer(account);
         startSession(remoteSession.account, remoteSession.token);
         return;
@@ -165,6 +191,36 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const loginWithGoogle = async (idToken) => {
+    const response = await authRequest("/api/Auth/google-login", {
+      idToken,
+      role: "Customer",
+    });
+    const { user: remoteUser, token } = getAuthData(response);
+
+    if (!token) {
+      throw new Error("The database API did not return an access token.");
+    }
+
+    const email = remoteUser.email || remoteUser.emailAddress;
+    if (!email) {
+      throw new Error("The Google login API did not return the account email.");
+    }
+
+    const account = {
+      id: remoteUser.id || email.toLowerCase(),
+      name:
+        remoteUser.name ||
+        remoteUser.fullName ||
+        [remoteUser.firstName, remoteUser.lastName].filter(Boolean).join(" ") ||
+        email,
+      email,
+      role: remoteUser.role || "customer",
+    };
+
+    startSession(account, token);
+  };
+
   const logout = () => {
     localStorage.removeItem(AUTH_KEY);
     localStorage.removeItem(TOKEN_KEY);
@@ -172,7 +228,9 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, register, login, logout, apiSessionLoading }}>
+    <AuthContext.Provider
+      value={{ user, register, login, loginWithGoogle, updateProfile, logout, apiSessionLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -180,11 +238,9 @@ export function AuthProvider({ children }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-
   if (!context) {
     throw new Error("useAuth must be used inside an AuthProvider");
   }
-
   return context;
 }
 
@@ -213,16 +269,22 @@ async function authRequest(endpoint, payload) {
 function getAuthData(response) {
   const result = response?.data || response;
   const user = result?.user || result?.account || result?.profile || {};
-  const token = result?.token || result?.accessToken || result?.access_token || result?.jwt;
+  const token =
+    result?.token ||
+    result?.accessToken ||
+    result?.access_token ||
+    result?.jwt ||
+    result?.jwtToken;
   return { user, token: typeof token === "string" ? token : null };
 }
 
 function getRemoteAccount(remoteUser, fallback, email) {
-  const name = remoteUser.name
-    || remoteUser.fullName
-    || [remoteUser.firstName, remoteUser.lastName].filter(Boolean).join(" ")
-    || fallback?.name
-    || email;
+  const name =
+    remoteUser.name ||
+    remoteUser.fullName ||
+    [remoteUser.firstName, remoteUser.lastName].filter(Boolean).join(" ") ||
+    fallback?.name ||
+    email;
 
   return {
     id: remoteUser.id || fallback?.id || email.toLowerCase(),
@@ -247,7 +309,7 @@ async function registerRemoteCustomer(account) {
     lastName: lastNameParts.join(" ") || firstName,
     email: account.email,
     password: account.password,
-    role: "Customer",
+    role: account.role === "seller" ? "Seller" : "Customer",
   });
   const { user, token } = getAuthData(response);
 

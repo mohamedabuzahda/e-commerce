@@ -14,6 +14,11 @@ import AdminDashboard from "./admin/Dashboard";
 import Checkout from "./pages/Checkout";
 import CustomerProfile from "./customer/Profile";
 import SupportChat from "./components/SupportChat";
+import Wishlist from "./pages/Wishlist";
+import Orders from "./pages/Orders";
+import OrderDetails from "./pages/OrderDetails";
+import SellerDashboard from "./seller/Dashboard";
+import SellerOrders from "./seller/Orders";
 
 function RequireAuth({ children }) {
   const { user } = useAuth();
@@ -44,6 +49,17 @@ function RequireCustomer({ children }) {
   return user.role === "admin" ? <Navigate to="/admin" replace /> : children;
 }
 
+function RequireSeller({ children }) {
+  const { user } = useAuth();
+  const location = useLocation();
+
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return user.role === "seller" ? children : <Navigate to="/" replace />;
+}
+
 function AppLayout() {
   const { pathname } = useLocation();
   const isAuthPage = pathname === "/login" || pathname === "/register";
@@ -58,10 +74,15 @@ function AppLayout() {
         <Route path="/" element={<Home />} />
         <Route path="/admin" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
         <Route path="/customer" element={<RequireCustomer><CustomerProfile /></RequireCustomer>} />
-        <Route path="/products" element={<RequireAuth><Products /></RequireAuth>} />
-        <Route path="/product/:id" element={<RequireAuth><ProductDetails /></RequireAuth>} />
-        <Route path="/cart" element={<RequireAuth><Cart /></RequireAuth>} />
-        <Route path="/checkout" element={<RequireAuth><Checkout /></RequireAuth>} />
+        <Route path="/seller" element={<RequireSeller><SellerDashboard /></RequireSeller>} />
+        <Route path="/seller/orders" element={<RequireSeller><SellerOrders /></RequireSeller>} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/wishlist" element={<RequireAuth><Wishlist /></RequireAuth>} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/orders/:id" element={<OrderDetails />} />
         <Route path="*" element={<RequireAuth><NotFound /></RequireAuth>} />
       </Routes>
       {!isAuthPage && <SupportChat />}

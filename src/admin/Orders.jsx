@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ORDERS_KEY, readList, subscribeToStore, writeList } from "../data/commerceStore";
+import { createNotification, ORDERS_KEY, readList, subscribeToStore, writeList } from "../data/commerceStore";
 import styles from "./AdminSection.module.css";
 
 function Orders() {
@@ -11,7 +11,18 @@ function Orders() {
     }, []);
 
     function updateStatus(id, status) {
-        writeList(ORDERS_KEY, readList(ORDERS_KEY).map((order) => order.id === id ? { ...order, status } : order));
+        const orders = readList(ORDERS_KEY);
+        const order = orders.find((item) => item.id === id);
+        if (!order || order.status === status) return;
+
+        writeList(ORDERS_KEY, orders.map((item) => item.id === id ? { ...item, status } : item));
+        createNotification(
+            order.customerEmail,
+            "Order status updated",
+            `Your order ${order.orderNumber || order.id} is now ${status.toLowerCase()}.`,
+            "order-status",
+            `${order.id}-${status}`
+        );
     }
 
     return (

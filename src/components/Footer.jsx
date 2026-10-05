@@ -14,6 +14,7 @@ function Footer() {
           <Link to="/">Home</Link>
           <Link to="/products">Shop</Link>
           <Link to="/cart">Cart</Link>
+          <Link to="/orders">Orders</Link>
         </nav>
       </div>
 

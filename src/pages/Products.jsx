@@ -21,6 +21,7 @@ function Products() {
   const category = searchParams.get("category") || "";
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "featured";
+  const priceRange = searchParams.get("price") || "";
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
 
   const limit = 16; // عدد المنتجات في الصفحة
@@ -72,11 +73,17 @@ function Products() {
     const query = search.trim().toLowerCase();
     const matching = products.filter((product) => {
       const matchesCategory = !category || normalizeCategory(product.category) === category;
+      const price = Number(product.price);
+      const matchesPrice = !priceRange
+        || (priceRange === "under-25" && price < 25)
+        || (priceRange === "25-100" && price >= 25 && price < 100)
+        || (priceRange === "100-500" && price >= 100 && price < 500)
+        || (priceRange === "500-plus" && price >= 500);
       const searchableText = [product.title, product.brand, product.category, product.description]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
-      return matchesCategory && (!query || searchableText.includes(query));
+      return matchesCategory && matchesPrice && (!query || searchableText.includes(query));
     });
 
     if (sort === "price-asc") return matching.sort((a, b) => a.price - b.price);
@@ -84,7 +91,7 @@ function Products() {
     if (sort === "rating") return matching.sort((a, b) => (b.rating || 0) - (a.rating || 0));
     if (sort === "name") return matching.sort((a, b) => a.title.localeCompare(b.title));
     return matching;
-  }, [products, search, category, sort]);
+  }, [products, search, category, priceRange, sort]);
 
   const total = filteredProducts.length;
   const totalPages = Math.max(1, Math.ceil(total / limit));
@@ -160,7 +167,19 @@ function Products() {
           <option value="name">Name: A to Z</option>
         </select>
 
-        {(search || category || sort !== "featured") && (
+        <select
+          aria-label="Filter by price"
+          value={priceRange}
+          onChange={(event) => updateFilter("price", event.target.value)}
+        >
+          <option value="">Any price</option>
+          <option value="under-25">Under $25</option>
+          <option value="25-100">$25–$99.99</option>
+          <option value="100-500">$100–$499.99</option>
+          <option value="500-plus">$500 and up</option>
+        </select>
+
+        {(search || category || priceRange || sort !== "featured") && (
           <button type="button" className={styles.clearButton} onClick={clearFilters}>
             <FiX aria-hidden="true" /> Clear
           </button>

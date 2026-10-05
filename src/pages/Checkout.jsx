@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { calcTotals, completeOrder } from "../store/cartSlice";
 import OrderSummary from "../components/OrderSummary";
 import CouponCode from "../components/CouponCode";
-import { ORDERS_KEY, readList, writeList } from "../data/commerceStore";
+import { createNotification, ORDERS_KEY, readList, writeList } from "../data/commerceStore";
+import { useAuth } from "../context/AuthContext";
 import styles from "../styles/Checkout.module.css";
 
 // ===== ثوابت =====
@@ -29,6 +30,10 @@ const METHODS = [
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+function createOrderNumber() {
+  return `NM-${Date.now().toString().slice(-8)}`;
+}
+
 // اسم طريقة الدفع اللي بيظهر في المراجعة
 const methodLabel = (method, pay) => {
   if (method === "card")
@@ -51,19 +56,20 @@ function Field({ label, error, className = "", children }) {
 
 function Checkout() {
   const dispatch = useDispatch();
+  const { user } = useAuth();
   const cart = useSelector((state) => state.cart.items);
   const promo = useSelector((state) => state.cart.promo);
   const totals = calcTotals(cart, promo);
 
   // ===== الـ State =====
   const [step, setStep] = useState(1); // الخطوة الحالية (1 عنوان / 2 دفع / 3 مراجعة)
-  const [address, setAddress] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    city: "",
-    street: "",
-  });
+  const [address, setAddress] = useState(() => ({
+    fullName: user?.name || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    city: user?.city || "",
+    street: user?.address || "",
+  }));
   const [method, setMethod] = useState("card");
   const [pay, setPay] = useState({
     cardNumber: "",
@@ -180,7 +186,7 @@ function Checkout() {
 
   // ===== تأكيد الطلب =====
   const placeOrder = () => {
-    const number = `NM-${Date.now().toString().slice(-8)}`;
+    const number = createOrderNumber();
     const payment = methodLabel(method, pay);
     const orderRecord = {
       id: number,
@@ -201,8 +207,6 @@ function Checkout() {
 
     try {
       writeList(ORDERS_KEY, [orderRecord, ...readList(ORDERS_KEY)]);
-      setOrder({ number, items: cart, totals, address, payment });
-      dispatch(completeOrder());
     } catch {
       setErrors((currentErrors) => ({
         ...currentErrors,
@@ -210,6 +214,33 @@ function Checkout() {
       }));
       return;
     }
+
+    try {
+      window.sessionStorage.setItem("shopEaseGuestEmail", address.email.trim().toLowerCase());
+    } catch {
+      setErrors((currentErrors) => ({
+        ...currentErrors,
+        save: "Your order was saved, but guest order lookup could not be remembered in this browser.",
+      }));
+    }
+
+    try {
+      createNotification(
+        address.email,
+        "Order placed",
+        `Your order ${number} was placed successfully.`,
+        "order-placed",
+        number
+      );
+    } catch {
+      setErrors((currentErrors) => ({
+        ...currentErrors,
+        save: "Your order was saved, but its in-app notification could not be saved.",
+      }));
+    }
+
+    setOrder({ number, items: cart, totals, address, payment });
+    dispatch(completeOrder());
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -273,6 +304,10 @@ function Checkout() {
   return (
     <div className={styles.page}>
       <h1 className={styles.heading}>Checkout</h1>
+      <p className={styles.guestNote}>
+        Demo checkout: no real payment is processed. Do not enter real card details.
+        Card, PayPal, and wallet selections are placeholders until a payment provider is connected.
+      </p>
 
       {/* ===== شريط الخطوات (Address → Payment → Review) ===== */}
       <div className={styles.stepper}>
