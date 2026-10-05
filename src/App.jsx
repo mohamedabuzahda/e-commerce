@@ -33,6 +33,17 @@ function RequireAdmin({ children }) {
   return user.role === "admin" ? children : <Navigate to="/" replace />;
 }
 
+function RequireCustomer({ children }) {
+  const { user } = useAuth();
+  const location = useLocation();
+
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return user.role === "admin" ? <Navigate to="/admin" replace /> : children;
+}
+
 function AppLayout() {
   const { pathname } = useLocation();
   const isAuthPage = pathname === "/login" || pathname === "/register";
@@ -46,7 +57,7 @@ function AppLayout() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/admin" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
-        <Route path="/customer" element={<RequireAuth><CustomerProfile /></RequireAuth>} />
+        <Route path="/customer" element={<RequireCustomer><CustomerProfile /></RequireCustomer>} />
         <Route path="/products" element={<RequireAuth><Products /></RequireAuth>} />
         <Route path="/product/:id" element={<RequireAuth><ProductDetails /></RequireAuth>} />
         <Route path="/cart" element={<RequireAuth><Cart /></RequireAuth>} />

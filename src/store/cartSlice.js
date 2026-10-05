@@ -13,11 +13,16 @@ export function calcTotals(items, promoValue) {
   const promo = typeof promoValue === "string" ? PROMOS[promoValue] : promoValue;
   const promoType = promo?.type?.toLowerCase();
   const subtotal = round(items.reduce((sum, item) => sum + item.price * item.quantity, 0));
-  const discount = promoType === "percent"
-    ? Math.min(subtotal, round(subtotal * Number(promo.value) / 100))
-    : promoType === "flat"
-      ? Math.min(subtotal, round(Number(promo.value)))
-      : 0;
+  const minimumOrder = Number(promo?.minimumOrder || 0);
+  const value = Number(promo?.value);
+  const meetsMinimum = subtotal >= minimumOrder;
+  const discount = !meetsMinimum || !Number.isFinite(value)
+    ? 0
+    : promoType === "percent"
+      ? Math.min(subtotal, round(subtotal * value / 100))
+      : promoType === "flat"
+        ? Math.min(subtotal, round(value))
+        : 0;
   const freeShipping = subtotal === 0 || subtotal >= FREE_SHIPPING_OVER || promoType === "shipping";
   const shipping = freeShipping ? 0 : SHIPPING_FEE;
 

@@ -7,6 +7,7 @@ import {
   CATEGORIES_KEY,
   ORDERS_KEY,
   notifyProductAdded,
+  publishProductToShop,
   PUBLISHED_SUBMISSIONS_KEY,
   readList,
   submitProductForReview,
@@ -182,6 +183,10 @@ function Profile() {
         }),
       });
       const createdProduct = response?.data || response;
+      const publishedProduct = publishProductToShop({
+        ...localProduct,
+        id: createdProduct?.id || createdProduct?.productId,
+      });
 
       if (imageData && createdProduct?.id) {
         try {
@@ -195,7 +200,7 @@ function Profile() {
       }
 
       notifyProductAdded(
-        { id: createdProduct?.id || createdProduct?.productId, ownerEmail: user.email },
+        { id: publishedProduct.id, ownerEmail: user.email },
         `Your product “${title}” was added to the store database.`
       );
       formElement.reset();
@@ -203,7 +208,9 @@ function Profile() {
       setImagePreview("");
       setSuccess(`“${title}” was added to the database products.`);
     } catch (submitError) {
-      const authRejected = /database API rejected this customer account|database session could not be renewed/i.test(submitError.message);
+      const authRejected = submitError.status === 401
+        || submitError.status === 403
+        || /database API rejected this customer account|database session could not be renewed/i.test(submitError.message);
 
       if (authRejected) {
         try {
@@ -215,7 +222,7 @@ function Profile() {
           formElement.reset();
           setImageData("");
           setImagePreview("");
-          setError("The database API denied access. This product is saved locally only and is not synchronized with the database.");
+          setError("The database API denied access. This product is now visible in Shop and saved locally, but is not synchronized with the database.");
           setSuccess(`“${title}” is now visible in Shop and the admin review queue.`);
         } catch {
           setError("The database API denied access and the product could not be saved locally either.");

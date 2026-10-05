@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { calcTotals, completeOrder } from "../store/cartSlice";
 import OrderSummary from "../components/OrderSummary";
+import CouponCode from "../components/CouponCode";
 import { ORDERS_KEY, readList, writeList } from "../data/commerceStore";
 import styles from "../styles/Checkout.module.css";
 
@@ -579,7 +580,10 @@ function Checkout() {
         </div>
 
         {/* ===== ملخص الطلب على الجنب ===== */}
-        <OrderSummary />
+        <div>
+          <CouponCode />
+          <OrderSummary />
+        </div>
       </div>
     </div>
   );

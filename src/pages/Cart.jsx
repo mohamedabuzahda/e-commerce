@@ -1,79 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addToCart,
   decreaseQty,
   removeFromCart,
-  applyPromo,
-  removePromo,
-  PROMOS,
-  calcTotals,
 } from "../store/cartSlice";
 import OrderSummary from "../components/OrderSummary";
-import { COUPONS_KEY, readList } from "../data/commerceStore";
+import CouponCode from "../components/CouponCode";
 import styles from "../styles/Cart.module.css";
 
 function Cart() {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.items);
   const stockMap = useSelector((state) => state.cart.stockMap);
-  const promo = useSelector((state) => state.cart.promo);
-  const totals = calcTotals(cart, promo);
-  const promoDetails = typeof promo === "string" ? { code: promo, ...PROMOS[promo] } : promo;
-
-  // ===== كود الخصم: الكلمة المكتوبة + رسالة النجاح/الخطأ =====
-  const [code, setCode] = useState("");
-  const [message, setMessage] = useState(null);
-
-  // تطبيق كود الخصم
-  const handleApply = (e) => {
-    e.preventDefault();
-    const key = code.trim().toUpperCase();
-
-    if (!key) {
-      setMessage({ type: "error", text: "Please enter a coupon code." });
-      return;
-    }
-    const coupon = readList(COUPONS_KEY).find(
-      (item) => item.code.toUpperCase() === key && item.status?.toLowerCase() === "active"
-    );
-    const selectedPromo = coupon
-      ? {
-          code: coupon.code,
-          type: coupon.type.toLowerCase() === "percent" ? "percent" : "flat",
-          value: Number(coupon.value),
-          minimumOrder: Number(coupon.minimumOrder || 0),
-          label: coupon.type.toLowerCase() === "percent" ? `${coupon.value}% off your order` : `$${Number(coupon.value).toFixed(2)} off your order`,
-        }
-      : PROMOS[key]
-        ? { code: key, ...PROMOS[key] }
-        : null;
-
-    if (!selectedPromo) {
-      setMessage({ type: "error", text: "This coupon code is not valid." });
-      return;
-    }
-
-    if (selectedPromo.minimumOrder > totals.subtotal) {
-      setMessage({ type: "error", text: `This coupon requires a minimum order of $${selectedPromo.minimumOrder.toFixed(2)}.` });
-      return;
-    }
-
-    dispatch(applyPromo(selectedPromo));
-    setMessage({
-      type: "success",
-      text: `${key} applied: ${selectedPromo.label}`,
-    });
-    setCode("");
-  };
-
-  // شيل كود الخصم
-  const handleRemovePromo = () => {
-    dispatch(removePromo());
-    setMessage(null);
-  };
-
   // ===== السلة فاضية =====
   if (cart.length === 0) {
     return (
@@ -166,37 +106,7 @@ function Cart() {
           </div>
 
           {/* ===== كود الخصم ===== */}
-          <div className={styles.coupon}>
-            {promo ? (
-              // لو في كود مطبق نعرضه مع زرار الحذف
-              <div className={styles.applied}>
-                <span>
-                  <strong>{promoDetails?.code || promo}</strong> · {promoDetails?.label}
-                </span>
-                <button onClick={handleRemovePromo}>Remove</button>
-              </div>
-            ) : (
-              <form className={styles.couponForm} onSubmit={handleApply}>
-                <input
-                  type="text"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  placeholder="Enter coupon code (e.g. SAVE10)"
-                />
-                <button type="submit">Apply</button>
-              </form>
-            )}
-
-            {message && (
-              <p
-                className={
-                  message.type === "error" ? styles.msgError : styles.msgOk
-                }
-              >
-                {message.text}
-              </p>
-            )}
-          </div>
+          <CouponCode />
 
           <Link to="/" className={styles.continue}>
             ← Continue shopping

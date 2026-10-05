@@ -46,7 +46,7 @@ function DashboardOverview() {
             <div className={styles.pageHeading}>
                 <div>
                     <p className={styles.eyebrow}>Store operations</p>
-                    <h1>Admin Dashboard</h1>
+                    <h1>Store Dashboard</h1>
                 </div>
                 <div className={styles.headingTools}>
                     <button className={styles.refreshButton} onClick={refreshDashboard}>Refresh</button>
@@ -133,7 +133,7 @@ function AdminLayout() {
                     </div>
                 </div>
 
-                <nav className={styles.navigation} aria-label="Admin sections">
+                <nav className={styles.navigation} aria-label="Store management sections">
                 {navigation.map(([key, label, icon]) => (
                     <button
                         key={key}

@@ -46,7 +46,7 @@ function Navbar() {
   const unreadCount = notifications.filter((notification) => !notification.readAt).length;
 
   useEffect(() => {
-    if (!user?.email || user.role === "admin") {
+    if (!user?.email) {
       setNotifications([]);
       return undefined;
     }
@@ -124,7 +124,7 @@ function Navbar() {
                   to="/customer"
                   onClick={(event) => { event.currentTarget.closest("details").open = false; }}
                 >
-                  {user.role === "customer" ? "Customer account" : "User account"}
+                  My account
                 </Link>
               )}
               <button

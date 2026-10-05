@@ -59,11 +59,16 @@ export async function adminRequest(endpoint, options = {}) {
 
     if (!response.ok) {
         if (response.status === 401) {
-            throw new Error(renewedSession
+            throw Object.assign(new Error(renewedSession
                 ? "The database API rejected this customer account. The server must allow customers to create products."
-                : "The database session could not be renewed. Sign in again, then retry.");
+                : "The database session could not be renewed. Sign in again, then retry."), {
+                status: response.status,
+            });
         }
-        throw new Error(data?.message || data?.title || `Request failed (${response.status})`);
+        throw Object.assign(
+            new Error(data?.message || data?.title || `Request failed (${response.status})`),
+            { status: response.status }
+        );
     }
 
     return data;

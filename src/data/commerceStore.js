@@ -29,9 +29,38 @@ export function submitProductForReview(product) {
     status: "pending",
     createdAt: product.createdAt || new Date().toISOString(),
   };
-  writeList(SUBMISSIONS_KEY, [submission, ...readList(SUBMISSIONS_KEY)]);
-  writeList(PUBLISHED_SUBMISSIONS_KEY, [submission, ...readList(PUBLISHED_SUBMISSIONS_KEY)]);
+  writeList(SUBMISSIONS_KEY, [
+    submission,
+    ...readList(SUBMISSIONS_KEY).filter((item) => item.id !== submission.id),
+  ]);
+  writeList(PUBLISHED_SUBMISSIONS_KEY, [
+    submission,
+    ...readList(PUBLISHED_SUBMISSIONS_KEY).filter((item) => item.id !== submission.id),
+  ]);
   return submission;
+}
+
+export function publishProductToShop(product) {
+  const publishedProduct = {
+    ...product,
+    id: product.id || `customer-${Date.now()}`,
+  };
+  writeList(PUBLISHED_SUBMISSIONS_KEY, [
+    publishedProduct,
+    ...readList(PUBLISHED_SUBMISSIONS_KEY).filter((item) => item.id !== publishedProduct.id),
+  ]);
+  return publishedProduct;
+}
+
+export function findActiveCoupon(code) {
+  const normalizedCode = String(code || "").trim().toUpperCase();
+  if (!normalizedCode) return null;
+
+  return readList(COUPONS_KEY).find(
+    (coupon) =>
+      String(coupon.code || "").trim().toUpperCase() === normalizedCode
+      && String(coupon.status || "").toLowerCase() === "active"
+  ) || null;
 }
 
 export function notifyProductAdded(product, message) {
